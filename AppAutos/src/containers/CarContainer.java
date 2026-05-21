@@ -1,7 +1,9 @@
-package main;
+package containers;
 
 import java.util.ArrayList;
 import java.util.Optional;
+
+import models.Car;
 
 public class CarContainer {
 	private ArrayList<Car> carsList;

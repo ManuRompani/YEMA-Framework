@@ -1,11 +1,11 @@
 package main;
 
-public class Comand {
+public class Comand<T> {
 	private String Resource;
 	private String Action;
-	private String Parameter;
+	private T Parameter;
 	
-	public Comand(String resource, String action, String parameter) {
+	public Comand(String resource, String action, T parameter) {
 		this.Resource = resource;
 		this.Action = action;
 		this.Parameter = parameter;
@@ -17,7 +17,7 @@ public class Comand {
 	public String getAction() {
 		return this.Action;
 	}
-	public String getParameter() {
+	public T getParameter() {
 		return this.Parameter;
 	}
 }

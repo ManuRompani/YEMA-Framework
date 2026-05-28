@@ -1,8 +1,9 @@
 package framework_controllers;
 
-import dtos.Comand;
+import dtos.Command;
+import dtos.Response;
 
 public abstract class BaseController {
 
-	public abstract void Ejecutar(Comand comand);
+	public abstract Response Ejecutar(Command comand);
 }

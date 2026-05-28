@@ -8,8 +8,8 @@ import models.Car;
 public class CarContainer {
 	private ArrayList<Car> carsList;
 	
-	public CarContainer(ArrayList<Car> carsList) {
-		this.carsList = carsList; 
+	public CarContainer() {
+		this.carsList = new ArrayList<Car>(); 
 	}
 	
 	public ArrayList<Car> getCarsList(){

@@ -3,7 +3,7 @@ package controllers;
 import java.util.List;
 
 import containers.CarContainer;
-import dtos.Comand;
+import dtos.Command;
 import framework_controllers.BaseController;
 import models.Car;
 
@@ -15,7 +15,7 @@ public class CarController extends BaseController {
 	}
 	
 	@Override
-	public void Ejecutar(Comand comand) {
+	public void Ejecutar(Command comand) {
 		switch(comand.getAction()) {
 			case("getCars"):
 				this.getCars();

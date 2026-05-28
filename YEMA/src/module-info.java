@@ -1,4 +1,6 @@
 module YEMA {
 	exports exceptions;
 	exports interfaces;
+	exports framework_controllers;
+	exports dtos;
 }

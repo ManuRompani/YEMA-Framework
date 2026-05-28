@@ -1,4 +1,6 @@
-package main;
+package utils;
+
+import dtos.Comand;
 
 public class ComandParser<T> {
 	

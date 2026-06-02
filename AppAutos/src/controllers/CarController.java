@@ -4,6 +4,7 @@ import java.util.List;
 
 import containers.CarContainer;
 import dtos.Command;
+import dtos.Response;
 import framework_controllers.BaseController;
 import models.Car;
 
@@ -15,12 +16,13 @@ public class CarController extends BaseController {
 	}
 	
 	@Override
-	public void Ejecutar(Command comand) {
+	public Response Ejecutar(Command comand) {
 		switch(comand.getAction()) {
 			case("getCars"):
 				this.getCars();
 				break;
 		}
+		return null;
 		
 	}
 	

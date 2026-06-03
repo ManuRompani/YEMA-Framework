@@ -33,4 +33,15 @@ public class CarContainer {
 			  throw new CarNotFoundException();
 		  }
 	}
+	
+	public Car getCarByLicensePlate(String license){
+		Optional<Car> car = this.carsList.stream().filter(c -> c.getLicensePlate() == license).findAny();
+		
+		  if (car.isPresent()) {
+		        return car.get();
+		  } 
+		  else {
+			  return null;
+		  }
+	}
 }

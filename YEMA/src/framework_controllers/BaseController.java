@@ -9,7 +9,7 @@ public abstract class BaseController{
 	 * LA INTERFAZ PARA QUE CONOZCA EL CONTRATO, LUEGO EN MAIN LE ENTREGO
 	 * EL COMUNICADORCONSOLA */
 	protected ICommunicator communicator; 
-	public abstract Response Ejecutar(Command comand);
+	public abstract void Ejecutar(Command comand);
 	
 	
 }

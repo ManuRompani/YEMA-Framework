@@ -37,19 +37,21 @@ class InitialSession implements Runnable {
 			
 			try {
 				Command command = parser.Parse(sMessage);
-				
 				BaseController controller = this.controllerLocator.getService(command.getResource());
-				response = controller.Ejecutar(command);
+				controller.Ejecutar(command);
 				
 			} catch (InvalidCommandException e) {
-				
 				response.setMessage(e.getMessage());
 			} catch (ServiceNotImplementedException e) {
-				
 				response.setMessage(e.getMessage());
 			}
-			
-			communicator.send(response.getMessage()); //ESTE RESPONSE DEVUELVE UN NULL
+			//Dejar sin controlar para desarrollo
+			/*catch(Exception e) {
+				response.setMessage("Unhandled exception");
+			}*/
+			if(response.getMessage() != null) {				
+				communicator.send(response.getMessage());
+			}
 		}
 		
 	}

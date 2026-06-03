@@ -2,6 +2,7 @@ package controllers;
 
 import java.util.List;
 
+import appautos_exceptions.InvalidCarFormatException;
 import containers.CarContainer;
 import dtos.Command;
 import dtos.Response;
@@ -23,10 +24,25 @@ public class CarController extends BaseController {
 				break;
 		}
 		return null;
-		
 	}
 	
 	public List<Car> getCars(){
 		return this.carContainer.getCarsList();
+	}
+	
+	public void addCar(Car car) throws InvalidCarFormatException{
+		if(this.isCarValid(car)) {
+			this.carContainer.addCar(car);
+		}
+		throw new InvalidCarFormatException();
+	}
+	
+	private boolean isCarValid(Car car) {
+		try {			
+			return true;
+		}
+		catch(Exception e) {
+			return false;
+		}
 	}
 }

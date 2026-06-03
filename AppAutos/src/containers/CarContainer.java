@@ -3,6 +3,7 @@ package containers;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import appautos_exceptions.CarNotFoundException;
 import models.Car;
 
 public class CarContainer {
@@ -20,7 +21,7 @@ public class CarContainer {
 		carsList.add(newCar);
 	}
 	
-	public void editCar(String licensePlate, double speed) throws Exception {
+	public void editCar(String licensePlate, double speed) throws CarNotFoundException {
 		Optional<Car> car = this.carsList.stream()
 								.filter(c -> c.getLicensePlate().equals(licensePlate))
 								.findAny();
@@ -29,7 +30,7 @@ public class CarContainer {
 		        car.get().setSpeed(speed);
 		  } 
 		  else {
-			  throw new Exception("Car not found");
+			  throw new CarNotFoundException();
 		  }
 	}
 }

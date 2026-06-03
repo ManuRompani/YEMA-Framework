@@ -11,13 +11,13 @@ import utils.CommandParser;
 
 class InitialSession implements Runnable {
 	
-	private ServiceLocator<BaseController> serviceLocator;
+	private ServiceLocator<BaseController> controllerLocator;
 	private ICommunicator communicator;
 	private CommandParser parser;
 	
-	public InitialSession(ServiceLocator<BaseController> serviceLocator, ICommunicator communicator) {
+	public InitialSession(ServiceLocator<BaseController> controllerLocator, ICommunicator communicator) {
 		super();
-		this.serviceLocator = serviceLocator;
+		this.controllerLocator = controllerLocator;
 		this.communicator = communicator;
 		this.parser = new CommandParser();
 	}
@@ -32,7 +32,7 @@ class InitialSession implements Runnable {
 			try {
 				Command command = parser.Parse(sMessage);
 				
-				BaseController controller = this.serviceLocator.getService(command.getResource());
+				BaseController controller = this.controllerLocator.getService(command.getResource());
 				response = controller.Ejecutar(command);
 				
 			} catch (InvalidCommandException e) {

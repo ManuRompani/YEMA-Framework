@@ -1,4 +1,4 @@
-package main;
+package mainsApp;
 
 import dtos.Command;
 import dtos.Response;
@@ -8,14 +8,15 @@ import framework_controllers.BaseController;
 import interfaces.ICommunicator;
 import services.ServiceLocator;
 import utils.CommandParser;
+import utils.CommunicatorConsole;
 
 class InitialSession implements Runnable {
 	
 	private ServiceLocator<BaseController> serviceLocator;
-	private ICommunicator communicator;
+	private CommunicatorConsole communicator;
 	private CommandParser parser;
 	
-	public InitialSession(ServiceLocator<BaseController> serviceLocator, ICommunicator communicator) {
+	public InitialSession(ServiceLocator<BaseController> serviceLocator, CommunicatorConsole communicator) {
 		super();
 		this.serviceLocator = serviceLocator;
 		this.communicator = communicator;
@@ -26,6 +27,11 @@ class InitialSession implements Runnable {
 	@Override
 	public void run() {
 		Response response = new Response();
+		
+		//PARA PROBAR, PERO EL REQUISITO A FUTURO ES: PRIMERO PREGUNTA
+		//QUIEN ES Y QUE EL DATO PERSISTA DURANTE LA SESION. 
+		communicator.send("Estoy funcionando"); 
+		
 		while(true) {
 			String sMessage = communicator.receive();
 			
@@ -36,12 +42,14 @@ class InitialSession implements Runnable {
 				response = controller.Ejecutar(command);
 				
 			} catch (InvalidCommandException e) {
+				
 				response.setMessage(e.getMessage());
 			} catch (ServiceNotImplementedException e) {
+				
 				response.setMessage(e.getMessage());
 			}
 			
-			communicator.send(response.getMessage());
+			communicator.send(response.getMessage()); //ESTE RESPONSE DEVUELVE UN NULL
 		}
 		
 	}

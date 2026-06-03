@@ -26,6 +26,8 @@ class InitialSession implements Runnable {
 	
 	@Override
 	public void run() {
+		//El comunicador se le inyecta al controlador brindado por el service controller y desde ahi se hace todo.
+		//Lo unico que se envia desde este metodo run son los errores generales
 		Response response = new Response();
 		
 		//PARA PROBAR, PERO EL REQUISITO A FUTURO ES: PRIMERO PREGUNTA

@@ -23,9 +23,11 @@ public class CommandParser{
 	
 	//Si trae parametros (this.segments.length > 3) los guarda en el diccionario y luego lo retorna
 	private HashMap<String, String> getParameters(){
-		HashMap<String, String> hParameters = null;
 		
-		if(this.segments.length > 3) {
+		//YAMILA: tener este null nos puede traer problemas, pienso en soluciones.
+		HashMap<String, String> hParameters = null; 
+		
+		if(this.segments.length > 3) { 
 			String[] parameters = this.segments[2].split("&");
 			hParameters = new HashMap<String, String>();
 			

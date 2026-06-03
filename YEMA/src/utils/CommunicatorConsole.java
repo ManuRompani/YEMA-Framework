@@ -38,7 +38,7 @@ public class CommunicatorConsole implements ICommunicator{
 					int b = is.read(); //Recibo por consola un numero que representa cada caracter	
 					char c = (char) b; //Lo transformo en un caracter
 					
-					if(c == '/') { //Si el caracter es igual a una / corto la lectura
+					if(c == '\r') { //Si el caracter es igual a un salto de linea corto la lectura
 						return respuesta; //Devuelvo lo recolectado
 					}
 					

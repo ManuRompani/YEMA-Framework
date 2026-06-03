@@ -6,6 +6,7 @@ public class Command {
 	private String resource;
 	private String action;
 	private HashMap<String, String> parameters;
+
 	
 	public Command(String resource, String action, HashMap<String, String> parameters) {
 		this.resource = resource;

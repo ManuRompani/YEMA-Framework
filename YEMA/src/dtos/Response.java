@@ -1,8 +1,9 @@
 package dtos;
 
 public class Response {
-	private String message;
-
+	
+	private String message = null;
+	
 	public String getMessage() {
 		return message;
 	}

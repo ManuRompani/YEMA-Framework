@@ -35,7 +35,9 @@ public class CarContainer {
 	}
 	
 	public Car getCarByLicensePlate(String license){
-		Optional<Car> car = this.carsList.stream().filter(c -> c.getLicensePlate() == license).findAny();
+		Optional<Car> car = this.carsList.stream()
+				.filter(c -> c.getLicensePlate().equals(license))
+				.findAny();
 		
 		  if (car.isPresent()) {
 		        return car.get();

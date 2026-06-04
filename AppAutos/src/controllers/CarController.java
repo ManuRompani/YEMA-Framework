@@ -41,6 +41,8 @@ public class CarController extends BaseController {
 	}
 	
 	private Response getCarByLicensePlate(String license){
+		System.out.println("Buscando: " + "[" + license + "]");
+		
 		Response response = new Response();
 		Car car = this.carContainer.getCarByLicensePlate(license);
 		

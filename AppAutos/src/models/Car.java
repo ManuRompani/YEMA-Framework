@@ -4,6 +4,10 @@ public class Car {
 	private String licensePlate;
 	private double speed;
 	
+	public Car() {
+		
+	}
+	
 	public Car(String licensePlate, double speed) {
 		super();
 		this.licensePlate = licensePlate;

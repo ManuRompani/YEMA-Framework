@@ -1,7 +1,7 @@
 package controllers;
 
 import appautos_utils.CarSerializer;
-import appautos_utils.GenericDeserializer;
+import appautos_utils.CarDeserializer;
 import containers.CarContainer;
 import dtos.Command;
 import dtos.Response;
@@ -13,13 +13,13 @@ public class CarController extends BaseController {
 	private CarContainer carContainer;
 	private CommunicatorConsole com;
 	private CarSerializer serializer;
-	private GenericDeserializer deserializer;
+	private CarDeserializer deserializer;
 	
 	public CarController(CarContainer carContainer, CommunicatorConsole com) {
 		this.carContainer = carContainer;
 		this.com = com;
 		this.serializer = new CarSerializer();
-		this.deserializer = new GenericDeserializer();
+		this.deserializer = new CarDeserializer();
 	}
 	
 	// ejecuta la accion recibida en el comando, recuerden comando es ej: car/get-car/licensePlate=ABC
@@ -30,8 +30,10 @@ public class CarController extends BaseController {
 			case("get-car"):
 				com.send(this.getCarByLicensePlate(command.getParameter("licensePlate")).getMessage());
 				break;
-			case("add-car"):	
-				com.send("En construccion");
+			case("add-car"):
+				String parameters = command.getParameter("licensePlate") + "|" + command.getParameter("speed");
+				
+				com.send(this.addCar(this.deserializer.deserealize(parameters, Car.class)).getMessage());
 			break;
 		}
 	}
@@ -69,7 +71,7 @@ public class CarController extends BaseController {
 				
 			response.setMessage("La patente ya existe");	
 			
-			}else if(isCarValid(car)) {
+			}else if(!isCarValid(car)) {
 				
 				response.setMessage("La velocidad no puede ser negativa");		
 				

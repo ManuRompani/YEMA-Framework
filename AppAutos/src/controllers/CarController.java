@@ -1,9 +1,7 @@
 package controllers;
 
-import java.util.List;
-
-import appautos_exceptions.InvalidCarFormatException;
 import appautos_utils.CarSerializer;
+import appautos_utils.GenericDeserializer;
 import containers.CarContainer;
 import dtos.Command;
 import dtos.Response;
@@ -15,11 +13,13 @@ public class CarController extends BaseController {
 	private CarContainer carContainer;
 	private CommunicatorConsole com;
 	private CarSerializer serializer;
+	private GenericDeserializer deserializer;
 	
 	public CarController(CarContainer carContainer, CommunicatorConsole com) {
 		this.carContainer = carContainer;
 		this.com = com;
 		this.serializer = new CarSerializer();
+		this.deserializer = new GenericDeserializer();
 	}
 	
 	@Override
@@ -28,6 +28,9 @@ public class CarController extends BaseController {
 			case("get-car"):
 				com.send(this.getCarByLicensePlate(command.getParameter("licensePlate")).getMessage());
 				break;
+			case("add-car"):	
+				com.send("En construccion");
+			break;
 		}
 	}
 	
@@ -45,32 +48,63 @@ public class CarController extends BaseController {
 		Car car = this.carContainer.getCarByLicensePlate(license);
 		
 		if(car == null) {
-			response.setMessage("Car not found");
-			return response;
+			response.setMessage("Car not found");			
 		}
 		else {
 			String carSerialized = this.serializer.serialize(car);
-			response.setMessage(carSerialized);
+			response.setMessage(carSerialized);			
+		}
+		//Elimine los return dentro del if y centralice en un solo return.
+		//El contenido del response es seteado dentro de cualquiera de los 2 bloques.
+		//Llega hasta aqui con el mensaje que corresponda.
+		return response;
+	}
+	
+	private Response addCar(Car car){
+			Response response = new Response();
+			
+			if(existsCar(car.getLicensePlate())) {
+				
+			response.setMessage("La patente ya existe");	
+			
+			}else if(isCarValid(car)) {
+				
+				response.setMessage("La velocidad no puede ser negativa");		
+				
+			}else{
+				
+				this.carContainer.addCar(car);
+				response.setMessage("Auto registrado exitosamente");				
+			}
+		
 			return response;
-		}
-	}
-	
-	private Response addCar(Car car) throws InvalidCarFormatException{
-		if(this.isCarValid(car)) {
-			this.carContainer.addCar(car);
-		}
-		throw new InvalidCarFormatException();
 	}
 	
 	
+	
+	
+	/*--- VALIDACIONES ---*/
+
+	
+	private boolean existsCar(String licensePlate) {
+		return carContainer.getCarsList().stream().anyMatch(car -> car.getLicensePlate().equalsIgnoreCase(licensePlate));
+	}
 	
 	//Ayudas
 	private boolean isCarValid(Car car) {
-		try {			
-			return true;
-		}
-		catch(Exception e) {
+		
+		if(car == null) {
+			return false;
+		}		
+		
+		if(car.getLicensePlate() == null || car.getLicensePlate().trim().isEmpty()) {
 			return false;
 		}
+		
+		if(car.getSpeed() < 0) {
+			return false;
+		}
+		
+		return true;
 	}
 }

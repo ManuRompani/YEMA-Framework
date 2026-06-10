@@ -36,7 +36,9 @@ class InitialSession implements Runnable {
 			String sMessage = communicator.receive();
 			
 			try {
+				System.out.println(sMessage);
 				Command command = parser.Parse(sMessage);
+				System.out.println("Recurso: " + command.getResource());
 				BaseController controller = this.controllerLocator.getService(command.getResource());
 				controller.Ejecutar(command);
 				

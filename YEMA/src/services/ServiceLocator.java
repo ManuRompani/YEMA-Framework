@@ -4,15 +4,15 @@ import java.util.HashMap;
 
 import exceptions.ServiceNotImplementedException;
 
-public class ServiceLocator<T> {
-	private HashMap<String, T> hServices;
+public class ServiceLocator {
+	private HashMap<Class<?>, Object> dict;
 	
 	public ServiceLocator() {
-		this.hServices = new HashMap<String, T>();
+		this.dict = new HashMap<Class<?>, Object>();
 	}
 	
-	public T getService(String key) throws ServiceNotImplementedException {
-		T service = this.hServices.get(key);
+	public <T> T getService(Class<T> clazz) throws ServiceNotImplementedException {
+		T service = (T) dict.get(clazz);
 		
 		if(service == null) {
 			throw new ServiceNotImplementedException();
@@ -21,7 +21,8 @@ public class ServiceLocator<T> {
 		return service;
 	}
 	
-	public void registerService(String key, T service) {
-		this.hServices.put(key, service);
+	public void registerService(Object newObject) {
+		Class<?> clazz = newObject.getClass();
+		this.dict.put(clazz, newObject);
 	}
 }

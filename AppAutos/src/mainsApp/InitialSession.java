@@ -12,13 +12,13 @@ import utils.CommunicatorConsole;
 
 class InitialSession implements Runnable {
 	
-	private ServiceLocator<BaseController> controllerLocator;
+	private ServiceLocator serviceLocator;
 	private ICommunicator communicator;
 	private CommandParser parser;
 	
-	public InitialSession(ServiceLocator<BaseController> controllerLocator, ICommunicator communicator) {
+	public InitialSession(ServiceLocator serviceLocator, ICommunicator communicator) {
 		super();
-		this.controllerLocator = controllerLocator;
+		this.serviceLocator = serviceLocator;
 		this.communicator = communicator;
 		this.parser = new CommandParser();
 	}
@@ -41,12 +41,16 @@ class InitialSession implements Runnable {
 				System.out.println(sMessage);
 				Command command = parser.Parse(sMessage);
 				System.out.println("Recurso: " + command.getResource());
-				BaseController controller = this.controllerLocator.getService(command.getResource());
+				String className = "controllers." + command.getResource() + "Controller";
+				Class<?> cls = Class.forName(className);
+				BaseController controller = (BaseController) this.serviceLocator.getService(cls);
 				controller.Ejecutar(command);
 				
 			} catch (InvalidCommandException e) {
 				response.setMessage(e.getMessage());
 			} catch (ServiceNotImplementedException e) {
+				response.setMessage(e.getMessage());
+			} catch (ClassNotFoundException e) {
 				response.setMessage(e.getMessage());
 			}
 			//Dejar sin controlar para desarrollo

@@ -13,12 +13,12 @@ public class Main {
 	public static void main(String[] args) {
 		CarContainer carContainer = new CarContainer();
 		CommunicatorConsole communicator = new CommunicatorConsole(System.out, System.in);
-		ServiceLocator<BaseController> serviceLocator = new ServiceLocator<>();
+		ServiceLocator serviceLocator = new ServiceLocator();
 		
 		
 		//REGISTRO UN NUEVO SERVICIO EN SERVICELOCATOR, PASANDOLE, KEY, NUEVO CONTROLADOR
 		//DE AUTO QUE RECIBE UN CONTENDOR DE AUTOS Y UN COMUNICADOR
-		serviceLocator.registerService("car", new CarController(carContainer, communicator));
+		serviceLocator.registerService(new CarController(carContainer, communicator));
 		
 		//A MODO DE PRUEBAS HARDCODEO UN AUTO NUEVO Y LO AÑADO
 		Car autoNuevo = new Car("ABC", 25);

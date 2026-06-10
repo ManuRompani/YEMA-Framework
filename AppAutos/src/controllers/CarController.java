@@ -22,6 +22,8 @@ public class CarController extends BaseController {
 		this.serializer = new CarSerializer();
 	}
 	
+	// ejecuta la accion recibida en el comando, recuerden comando es ej: car/get-car/licensePlate=ABC
+	// si se necesita enviar datos se hace aqui mismo en el comunicador
 	@Override
 	public void Ejecutar(Command command) {
 		switch(command.getAction()) {
@@ -39,6 +41,8 @@ public class CarController extends BaseController {
 	}
 	
 	private Response getCarByLicensePlate(String license){
+		System.out.println("Buscando: " + "[" + license + "]");
+		
 		Response response = new Response();
 		Car car = this.carContainer.getCarByLicensePlate(license);
 		

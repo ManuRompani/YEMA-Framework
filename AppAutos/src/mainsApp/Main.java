@@ -23,6 +23,9 @@ public class Main {
 		//A MODO DE PRUEBAS HARDCODEO UN AUTO NUEVO Y LO AÑADO
 		Car autoNuevo = new Car("ABC", 25);
 		carContainer.addCar(autoNuevo);
+		System.out.println(autoNuevo.toString());
+		//---------------------------------------
+		
 		
 		InitialSession initialSession = new InitialSession(serviceLocator, communicator);
 		

@@ -9,12 +9,14 @@ import interfaces.ICommunicator;
 import services.ServiceLocator;
 import utils.CommandParser;
 import utils.CommunicatorConsole;
+import utils.SessionData;
 
 class InitialSession implements Runnable {
 	
 	private ServiceLocator serviceLocator;
 	private ICommunicator communicator;
 	private CommandParser parser;
+	private SessionData sessionData;
 	
 	public InitialSession(ServiceLocator serviceLocator, ICommunicator communicator) {
 		super();
@@ -32,15 +34,18 @@ class InitialSession implements Runnable {
 		
 		//PARA PROBAR, PERO EL REQUISITO A FUTURO ES: PRIMERO PREGUNTA
 		//QUIEN ES Y QUE EL DATO PERSISTA DURANTE LA SESION. 
-		communicator.send("Estoy funcionando"); 
+		communicator.send("Ingrese su nombre: "); 
+		String username = communicator.receive();
+		this.sessionData = new SessionData(username);
+		
+		communicator.send("Hola " + this.sessionData.getUserName()); 
 		
 		while(true) {
 			String sMessage = communicator.receive();
-			
 			try {
 				System.out.println(sMessage);
 				Command command = parser.Parse(sMessage);
-				System.out.println("Recurso: " + command.getResource());
+
 				String className = "controllers." + command.getResource() + "Controller";
 				Class<?> cls = Class.forName(className);
 				BaseController controller = (BaseController) this.serviceLocator.getService(cls);

@@ -49,7 +49,7 @@ class InitialSession implements Runnable {
 				String className = "controllers." + command.getResource() + "Controller";
 				Class<?> cls = Class.forName(className);
 				BaseController controller = (BaseController) this.serviceLocator.getService(cls);
-				controller.Ejecutar(command);
+				response = controller.Ejecutar(command);
 				
 			} catch (InvalidCommandException e) {
 				response.setMessage(e.getMessage());
@@ -62,11 +62,12 @@ class InitialSession implements Runnable {
 			/*catch(Exception e) {
 				response.setMessage("Unhandled exception");
 			}*/
+			
+			
 			if(response.getMessage() != null) {				
 				communicator.send(response.getMessage());
 			}
-		}
 		
+		}
 	}
-
 }

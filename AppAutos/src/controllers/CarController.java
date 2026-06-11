@@ -12,33 +12,32 @@ import utils.SessionData;
 
 public class CarController extends BaseController {
 	private CarContainer carContainer;
-	private CommunicatorConsole com;
 	private CarSerializer serializer;
 	private CarDeserializer deserializer;
 	
-	public CarController(CarContainer carContainer, CommunicatorConsole com) {
+	public CarController(CarContainer carContainer) {
 		this.carContainer = carContainer;
-		this.com = com;
 		this.serializer = new CarSerializer();
 		this.deserializer = new CarDeserializer();
 	}
 	
+	// AHORA EL CONTROLADOR RETORNA UN REPSONSE Y NO SE ENCARGA DE COMUNICADOR
+	// YA QUE ES 1 PARA CADA SESION!!!
 	// ejecuta la accion recibida en el comando, recuerden comando es ej: car/get-car/licensePlate=ABC
-	// si se necesita enviar datos se hace aqui mismo en el comunicador
 	@Override
-	public void Ejecutar(Command command) {
+	public Response Ejecutar(Command command){
 		switch(command.getAction()) {
 			case("get-car"):
-				com.send(this.getCarByLicensePlate(command.getParameter("licensePlate")).getMessage());
-				break;
+				return this.getCarByLicensePlate(command.getParameter("licensePlate"));
 			case("add-car"):
 				String parameters = command.getParameter("licensePlate") + "|" + command.getParameter("speed");
-				
-				com.send(this.addCar(this.deserializer.deserealize(parameters, Car.class)).getMessage());
-			break;
+				return this.addCar(this.deserializer.deserealize(parameters, Car.class));
+				default:
+					Response response = new Response();
+					response.setMessage("No action was taken");
+					return response;
 		}
 	}
-	
 	
 	//Acciones
 	private Response getCars(){

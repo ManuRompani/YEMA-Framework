@@ -17,15 +17,15 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		ServerSocket ss = new ServerSocket(80);
 		CarContainer carContainer = new CarContainer();
-		CommunicatorConsole communicator = new CommunicatorConsole(System.out, System.in);
+		//CommunicatorConsole communicator = new CommunicatorConsole(System.out, System.in);
 		ServiceLocator serviceLocator = new ServiceLocator();
 		
 		
 		//REGISTRO UN NUEVO SERVICIO EN SERVICELOCATOR, PASANDOLE, KEY, NUEVO CONTROLADOR
 		//DE AUTO QUE RECIBE UN CONTENDOR DE AUTOS Y UN COMUNICADOR
-		serviceLocator.registerService(new CarController(carContainer, communicator));
+		serviceLocator.registerService(new CarController(carContainer));
 		
-		//Builder de la app, va en el framework
+		//Falta Builder de la app, va en el framework
 		
 		//A MODO DE PRUEBAS HARDCODEO UN AUTO NUEVO Y LO AÑADO
 		Car autoNuevo = new Car("ABC", 25);

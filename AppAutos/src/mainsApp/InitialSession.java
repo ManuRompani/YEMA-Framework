@@ -38,7 +38,7 @@ class InitialSession implements Runnable {
 		String username = communicator.receive();
 		this.sessionData = new SessionData(username);
 		
-		communicator.send("Hola " + this.sessionData.getUserName()); 
+		communicator.send("Hola " + this.sessionData.getUserName()); //puedo usar this.sessionData.getAttribute(username)
 		
 		while(true) {
 			String sMessage = communicator.receive();
@@ -49,6 +49,7 @@ class InitialSession implements Runnable {
 				String className = "controllers." + command.getResource() + "Controller";
 				Class<?> cls = Class.forName(className);
 				BaseController controller = (BaseController) this.serviceLocator.getService(cls);
+				controller.setSessionData(sessionData);
 				response = controller.Ejecutar(command);
 				
 			} catch (InvalidCommandException e) {

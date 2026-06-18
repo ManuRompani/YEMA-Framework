@@ -11,6 +11,10 @@ public class ControllerLocator {
 		this.controllers = new HashMap<>();
 	}
 	
+	public void registerController(String resource, BaseController controller) {
+		this.controllers.put(resource.toLowerCase(), controller);
+	}
+	
 	
 	public BaseController getController(String resource) throws ServiceNotImplementedException {
 		BaseController controller = this.controllers.get(resource.toLowerCase());

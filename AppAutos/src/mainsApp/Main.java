@@ -10,11 +10,20 @@ import framework_controllers.BaseController;
 import interfaces.ICommunicator;
 import models.Car;
 import services.ServiceLocator;
+import services.YemaAppBuilder;
 import utils.CommunicatorConsole;
 
 public class Main {
-
 	public static void main(String[] args) throws IOException {
+		YemaAppBuilder builder = new YemaAppBuilder();
+		
+		builder.addService(new CarContainer());
+		
+		builder.addController("car", new CarController());
+		
+		
+	}
+	/*public static void main(String[] args) throws IOException {
 		ServerSocket ss = new ServerSocket(80);
 		CarContainer carContainer = new CarContainer();
 		//CommunicatorConsole communicator = new CommunicatorConsole(System.out, System.in);
@@ -45,6 +54,6 @@ public class Main {
 			
 			hilo.start();
 		}
-	}
+	}*/
 
 }

@@ -5,15 +5,18 @@ import dtos.Response;
 import exceptions.InvalidCommandException;
 import exceptions.ServiceNotImplementedException;
 import framework_controllers.BaseController;
+import framework_controllers.ControllerLocator;
 import interfaces.ICommunicator;
 import services.ServiceLocator;
 import utils.CommandParser;
 import utils.CommunicatorConsole;
 import utils.SessionData;
+import utils.Context;
 
 class InitialSession implements Runnable {
 	
 	private ServiceLocator serviceLocator;
+	private ControllerLocator controllerLocator;
 	private ICommunicator communicator;
 	private CommandParser parser;
 	private SessionData sessionData;
@@ -33,10 +36,11 @@ class InitialSession implements Runnable {
 		Response response = new Response();
 		
 		//PARA PROBAR, PERO EL REQUISITO A FUTURO ES: PRIMERO PREGUNTA
-		//QUIEN ES Y QUE EL DATO PERSISTA DURANTE LA SESION. 
+		//QUIEN ES Y QUE EL DATO PERSISTA DURANTE LA SESION.
 		communicator.send("Ingrese su nombre: "); 
 		String username = communicator.receive();
 		this.sessionData = new SessionData(username);
+		Context context = new Context(this.sessionData);
 		
 		communicator.send("Hola " + this.sessionData.getUserName()); //puedo usar this.sessionData.getAttribute(username)
 		
@@ -44,21 +48,25 @@ class InitialSession implements Runnable {
 			String sMessage = communicator.receive();
 			try {
 				System.out.println(sMessage);
+				
+				if(sMessage.toLowerCase().equals("salir")) {
+					communicator.send("Saliendo....");
+					return;//esto termina la vida del hilo
+				}
+				
 				Command command = parser.Parse(sMessage);
 
-				String className = "controllers." + command.getResource() + "Controller";
-				Class<?> cls = Class.forName(className);
-				BaseController controller = (BaseController) this.serviceLocator.getService(cls);
-				controller.setSessionData(sessionData);
-				response = controller.Ejecutar(command);
+				BaseController controller = this.controllerLocator.getController(command.getResource());
+				//aca se crea el objeto contexto
+				response = controller.Ejecutar(command, context);//el sesion data va a pasar a contexto
 				
 			} catch (InvalidCommandException e) {
 				response.setMessage(e.getMessage());
 			} catch (ServiceNotImplementedException e) {
 				response.setMessage(e.getMessage());
-			} catch (ClassNotFoundException e) {
-				response.setMessage(e.getMessage());
-			}
+			} //catch (ClassNotFoundException e) {
+				//response.setMessage(e.getMessage());
+			//}
 			//Dejar sin controlar para desarrollo
 			/*catch(Exception e) {
 				response.setMessage("Unhandled exception");

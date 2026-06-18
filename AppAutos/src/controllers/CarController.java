@@ -8,7 +8,7 @@ import dtos.Response;
 import framework_controllers.BaseController;
 import models.Car;
 import utils.CommunicatorConsole;
-import utils.SessionData;
+import utils.Context;
 
 public class CarController extends BaseController {
 	private CarContainer carContainer;
@@ -25,13 +25,14 @@ public class CarController extends BaseController {
 	// YA QUE ES 1 PARA CADA SESION!!!
 	// ejecuta la accion recibida en el comando, recuerden comando es ej: car/get-car/licensePlate=ABC
 	@Override
-	public Response Ejecutar(Command command){
+	public Response Ejecutar(Command command, Context context){
 		switch(command.getAction()) {
 			case("get-car"):
 				return this.getCarByLicensePlate(command.getParameter("licensePlate"));
 			case("add-car"):
-				String parameters = command.getParameter("licensePlate") + "|" + command.getParameter("speed");
-				return this.addCar(this.deserializer.deserealize(parameters, Car.class));
+				return this.addCar( command.getParameter("speed"),
+									command.getParameter("licensePlate"),
+									context.getSessionData().getUserName() );
 				default:
 					Response response = new Response();
 					response.setMessage("No action was taken");
@@ -64,19 +65,21 @@ public class CarController extends BaseController {
 		return response;
 	}
 	
-	private Response addCar(Car car){
+	private Response addCar(String speed, String licensePlate, String userName){
 			Response response = new Response();
+			double dSpeed = Double.parseDouble(speed);
 			
-			if(existsCar(car.getLicensePlate())) {
+			if(this.carContainer.getCarByLicensePlate(licensePlate) != null) {
 				
 			response.setMessage("La patente ya existe");	
 			
-			}else if(!isCarValid(car)) {
+			}else if(dSpeed < 0) {
 				
 				response.setMessage("La velocidad no puede ser negativa");		
 				
 			}else{
-				
+				Car car = new Car(licensePlate, dSpeed);
+				car.setUserName(userName);
 				this.carContainer.addCar(car);
 				response.setMessage("Auto registrado exitosamente");				
 			}

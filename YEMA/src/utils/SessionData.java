@@ -3,8 +3,7 @@ package utils;
 import java.util.HashMap;
 
 public class SessionData {
-	private HashMap<String, Object> attributes;
-	 
+	private HashMap<String, Object> attributes;	 
 	
 	public SessionData(String username) {
 		this.attributes = new HashMap<>();

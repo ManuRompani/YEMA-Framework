@@ -3,6 +3,7 @@ package models;
 public class Car {
 	private String licensePlate;
 	private double speed;
+	private String userName;
 	
 	public Car() {
 		
@@ -17,6 +18,9 @@ public class Car {
 	
 	public String getLicensePlate() {
 		return licensePlate;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 	public double getSpeed() {

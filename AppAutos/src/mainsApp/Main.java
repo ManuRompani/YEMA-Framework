@@ -19,7 +19,7 @@ public class Main {
 		
 		builder.addService(new CarContainer());
 		
-		builder.addController("car", new CarController());
+		builder.addController("car", CarController.class);
 		
 		
 	}

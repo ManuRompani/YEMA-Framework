@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.net.ServerSocket;
 
 import framework_controllers.BaseController;
+import framework_controllers.ControllerLocator;
 import utils.Constants;
 
 public class YemaAppBuilder {
 	private ServiceLocator serviceLocator = null;
+	private ControllerLocator controllerLocator = null;
 	
 	// Define que tipo de comunicador se va a usar
 	private String communicatorType = Constants.SOCKET;
@@ -39,7 +41,7 @@ public class YemaAppBuilder {
 	}
 
 	// Configuracion de controladores
-	public void addController(String key, BaseController value) {
+	public void addController(String key, Class<BaseController> value) {
 		//this.controllerLocator.Add(key, value);
 	}
 

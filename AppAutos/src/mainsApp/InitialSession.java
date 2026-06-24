@@ -9,7 +9,6 @@ import framework_controllers.ControllerLocator;
 import interfaces.ICommunicator;
 import services.ServiceLocator;
 import utils.CommandParser;
-import utils.CommunicatorConsole;
 import utils.SessionData;
 import utils.Context;
 
@@ -21,62 +20,81 @@ class InitialSession implements Runnable {
 	private CommandParser parser;
 	private SessionData sessionData;
 	
-	public InitialSession(ServiceLocator serviceLocator, ICommunicator communicator) {
-		super();
-		this.serviceLocator = serviceLocator;
+	public InitialSession(ControllerLocator controllerLocator, ICommunicator communicator) {
+		super();	
+		this.controllerLocator = controllerLocator;
 		this.communicator = communicator;
 		this.parser = new CommandParser();
 	}
 
 	
+	//Este metodo se inicia cuando en Main se crea un nuevo hilo (linea 45)  - Yami
 	@Override
-	public void run() {
-		//El comunicador se le inyecta al controlador brindado por el service controller y desde ahi se hace todo.
-		//Lo unico que se envia desde este metodo run son los errores generales
+	public void run() {	
+		//creamos un nuevo objeto response para guardar respuestas del servidor  - Yami
 		Response response = new Response();
 		
-		//PARA PROBAR, PERO EL REQUISITO A FUTURO ES: PRIMERO PREGUNTA
-		//QUIEN ES Y QUE EL DATO PERSISTA DURANTE LA SESION.
+		
+		//Paso 1: preguntamos al usuario quien es  - Yami
 		communicator.send("Ingrese su nombre: "); 
 		String username = communicator.receive();
+		
+		//Paso 2: creamos un nuevo SessionData que recibe el nombre consultado y se lo asigna a esta sessionData y saludamos al usuario - Yami
 		this.sessionData = new SessionData(username);
-		Context context = new Context(this.sessionData);
+		communicator.send("Hola " + this.sessionData.getUserName());
 		
-		communicator.send("Hola " + this.sessionData.getUserName()); //puedo usar this.sessionData.getAttribute(username)
 		
+		//Paso 3: creamos un bucle donde vamos a recibir los comandos a ejecutar  - Yami
 		while(true) {
+			//Paso 5: Recibo el comando por el comunicador por socket - Yami
 			String sMessage = communicator.receive();
-			try {
-				System.out.println(sMessage);
+			
+			try {				
+				System.out.println(sMessage); 
+						
+					//Paso 6: Si lo que escribe usuario es salir, entro aca a finalziar el hilo - Yami
+					if(sMessage.toLowerCase().trim().equals("salir")) {
+						communicator.send("Saliendo....");
+					
+						//Esta linea es para que puedas comprobar desde consola que el hilo se finalizo  - Yami
+						System.out.println("Hilo terminado: " + Thread.currentThread().getName());
+						return;//esto termina la vida del hilo  - Yami
+					}
 				
-				if(sMessage.toLowerCase().equals("salir")) {
-					communicator.send("Saliendo....");
-					return;//esto termina la vida del hilo
-				}
-				
+				//Paso 7: Parseo el mensaje recibido a un comando
 				Command command = parser.Parse(sMessage);
-
+				
+				//Paso 8: Busco el controlador pasandole el recurso recibido en el comando
 				BaseController controller = this.controllerLocator.getController(command.getResource());
-				//aca se crea el objeto contexto
-				response = controller.Ejecutar(command, context);//el sesion data va a pasar a contexto
+				
+				//Paso 9: creamos un nuevo objeto contexto que recibe los datos de la sesion 
+				//y los conserva durante la misma, luego llamamos al controlador y ejecutamos
+				// pasandole el comando y el contexto, la respuesta de esa ejecucion la guardamos en
+				// la variable response para mostrar una respuesta al usuario - Yami
+				Context context = new Context(this.sessionData);
+				response = controller.Ejecutar(command, context);
+				
+				
+				//si el mensaje recibido no es null, muestro respuesta, sino sigo esperando
+				if(response.getMessage() != null) {				
+				communicator.send(response.getMessage());
+				}
+			
+				
 				
 			} catch (InvalidCommandException e) {
 				response.setMessage(e.getMessage());
 			} catch (ServiceNotImplementedException e) {
 				response.setMessage(e.getMessage());
-			} //catch (ClassNotFoundException e) {
-				//response.setMessage(e.getMessage());
-			//}
-			//Dejar sin controlar para desarrollo
-			/*catch(Exception e) {
-				response.setMessage("Unhandled exception");
-			}*/
-			
-			
-			if(response.getMessage() != null) {				
-				communicator.send(response.getMessage());
+			} catch (Exception e) {
+				response.setMessage(e.getMessage());
 			}
+			
+			
+			
+			
 		
 		}
+
 	}
 }

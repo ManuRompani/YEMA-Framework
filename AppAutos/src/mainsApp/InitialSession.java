@@ -72,15 +72,8 @@ class InitialSession implements Runnable {
 				// pasandole el comando y el contexto, la respuesta de esa ejecucion la guardamos en
 				// la variable response para mostrar una respuesta al usuario - Yami
 				Context context = new Context(this.sessionData);
-				response = controller.Ejecutar(command, context);
-				
-				
-				//si el mensaje recibido no es null, muestro respuesta, sino sigo esperando
-				if(response.getMessage() != null) {				
-				communicator.send(response.getMessage());
-				}
-			
-				
+				response = controller.Ejecutar(command, context);	
+					
 				
 			} catch (InvalidCommandException e) {
 				response.setMessage(e.getMessage());
@@ -88,9 +81,13 @@ class InitialSession implements Runnable {
 				response.setMessage(e.getMessage());
 			} catch (Exception e) {
 				response.setMessage(e.getMessage());
+				break;
 			}
 			
-			
+			//si el mensaje recibido no es null, muestro respuesta, sino sigo esperando
+			if(response.getMessage() != null) {				
+			communicator.send(response.getMessage());
+			}
 			
 			
 		

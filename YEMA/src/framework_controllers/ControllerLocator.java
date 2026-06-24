@@ -1,6 +1,5 @@
 package framework_controllers;
 
-import framework_controllers.BaseController;
 import exceptions.ServiceNotImplementedException;
 import java.util.HashMap;
 

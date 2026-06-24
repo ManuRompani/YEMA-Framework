@@ -50,7 +50,7 @@ public class Main {
 			//Paso 2: una vez aceptada la conexion, creamos un nuevo hilo que recibe una nueva InitialSession a la que
 			//le pasamos un ControllerLocator y un nuevo Comunicador por socket. No le pasamos un nuevo controller locator,
 			//porque se comparte en todas las sesiones, lo unico que es por cada sesion es el comunicador por socket. - Yami
-			Thread hilo = new Thread(new InitialSession(controllerLocator, 
+			Thread hilo = new Thread(new AppSession(controllerLocator, 
 					new CommunicatorSocket(soc))); //Cambio de comunicador, por socket 
 			
 			//Paso 3: iniciamos el hilo - Yami

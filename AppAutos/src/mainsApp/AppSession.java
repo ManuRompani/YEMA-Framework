@@ -12,7 +12,7 @@ import utils.CommandParser;
 import utils.SessionData;
 import utils.Context;
 
-class InitialSession implements Runnable {
+class AppSession implements Runnable {
 	
 	private ServiceLocator serviceLocator;
 	private ControllerLocator controllerLocator;
@@ -20,7 +20,7 @@ class InitialSession implements Runnable {
 	private CommandParser parser;
 	private SessionData sessionData;
 	
-	public InitialSession(ControllerLocator controllerLocator, ICommunicator communicator) {
+	public AppSession(ControllerLocator controllerLocator, ICommunicator communicator) {
 		super();	
 		this.controllerLocator = controllerLocator;
 		this.communicator = communicator;

@@ -2,6 +2,7 @@ package framework_controllers;
 import dtos.Command;
 import dtos.Response;
 import interfaces.ICommunicator;
+import services.ServiceLocator;
 import utils.Context;
 
 public abstract class BaseController{
@@ -10,11 +11,6 @@ public abstract class BaseController{
 	 * EL COMUNICADORCONSOLA */
 	// no hace falta comunicador
 	// protected ICommunicator communicator; 
-	public abstract Response Ejecutar(Command comand, Context context);
-	
-	
-	
-	
-	
+	public abstract Response Ejecutar(Command comand, Context context, ServiceLocator serviceLocator);
 	
 }

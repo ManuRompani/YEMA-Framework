@@ -5,8 +5,10 @@ import appautos_utils.CarDeserializer;
 import containers.CarContainer;
 import dtos.Command;
 import dtos.Response;
+import exceptions.ServiceNotImplementedException;
 import framework_controllers.BaseController;
 import models.Car;
+import services.ServiceLocator;
 import utils.CommunicatorConsole;
 import utils.Context;
 
@@ -15,7 +17,7 @@ public class CarController extends BaseController {
 	private CarSerializer serializer;
 	private CarDeserializer deserializer;
 	
-	public CarController(CarContainer carContainer) {
+	public CarController() {
 		this.carContainer = carContainer;
 		this.serializer = new CarSerializer();
 		this.deserializer = new CarDeserializer();
@@ -25,7 +27,16 @@ public class CarController extends BaseController {
 	// YA QUE ES 1 PARA CADA SESION!!!
 	// ejecuta la accion recibida en el comando, recuerden comando es ej: car/get-car/licensePlate=ABC
 	@Override
-	public Response Ejecutar(Command command, Context context){
+	public Response Ejecutar(Command command, Context context, ServiceLocator serviceLocator){
+		//Obtenemos los servicios (en este caso solo el carcontainer)
+		try {			
+			this.carContainer = serviceLocator.getService(CarContainer.class);
+		}
+		catch(ServiceNotImplementedException e){
+			Response response = new Response();
+			response.setMessage("Ocurrió un error al tratar de obtener el servicio.");
+			return response;
+		}
 		switch(command.getAction()) {
 			case("get-car"):
 				return this.getCarByLicensePlate(command.getParameter("licensePlate"));

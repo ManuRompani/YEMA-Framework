@@ -10,11 +10,9 @@ import utils.Constants;
 public class YemaAppBuilder {
 	private ServiceLocator serviceLocator = null;
 	private ControllerLocator controllerLocator = null;
-	
-	// Define que tipo de comunicador se va a usar
 	private String communicatorType = Constants.SOCKET;
 	
-	//Propiedades de configuracion del socket
+	private ServerSocket serverSocket = null;
 	private int socketPort = 80;
 
 	// CONFIGURACION DE CONSOLA
@@ -41,34 +39,20 @@ public class YemaAppBuilder {
 	}
 
 	// Configuracion de controladores
-	public void addController(String key, Class<BaseController> value) {
-		//this.controllerLocator.Add(key, value);
+	public void addController(String key, BaseController value) {
+		if(this.controllerLocator == null) {
+			this.controllerLocator = new ControllerLocator();
+		}
+		this.controllerLocator.registerController(key, value);;
 	}
 
 
 	
 	public YemaApp build() throws IOException {
-		YemaApp app = new YemaApp();
-		
-		//Configuracion del comunicador
-		app.setCommunicatorType(this.communicatorType);
-		
 		if(communicatorType.equals(Constants.SOCKET)) {
-			ServerSocket ss = new ServerSocket(this.socketPort);
-			app.setServerSocket(ss);
-		}
-		else {
-			// aca se prepararia para que use la consola
+			serverSocket = new ServerSocket(this.socketPort);
 		}
 		
-		
-		//Configuracion del serviceLocator
-		app.setServiceLocator(this.serviceLocator);
-		
-		
-		//Configuracion de controllerLocator
-		// app.setControllerLocator(this.controllerLocator); aun no esta
-		
-		return new YemaApp();
+		return new YemaApp(this.serviceLocator, this.controllerLocator, this.serverSocket);
 	}
 }

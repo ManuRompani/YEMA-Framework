@@ -4,63 +4,66 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import exceptions.CommunicatorException;
+import framework_controllers.ControllerLocator;
+import interfaces.ICommunicator;
+import utils.CommandParser;
 import utils.CommunicatorConsole;
+import utils.CommunicatorSocket;
 import utils.Constants;
 
 
 public class YemaApp implements Runnable  {
-	private ServerSocket serverSocket = null;
-	private ServiceLocator serviceLocator = null;
-	//private ControllerLocator controllerLocator = null;
-	private String communicatorType = Constants.SOCKET;
+	private ServiceLocator serviceLocator;
+	private ControllerLocator controllerLocator;
+	private ServerSocket serverSocket;
+	private CommandParser commandParser = new CommandParser();
 	
-	public void setServerSocket(ServerSocket serverSocket) {
+	// si se usa socket debe recibir socket != null
+	public YemaApp(ServiceLocator serviceLocator, 
+			ControllerLocator controllerLocator, 
+			ServerSocket serverSocket) 
+	{
+		this.serviceLocator = serviceLocator;
+		this.controllerLocator = controllerLocator;
 		this.serverSocket = serverSocket;
 	}
-	public void setServiceLocator(ServiceLocator serviceLocator) {
-		this.serviceLocator = serviceLocator;
-	}
-	//Geters y Seters
-	public String getCommunicatorType() {
-		return communicatorType;
-	}
-	public void setCommunicatorType(String communicatorType) {
-		this.communicatorType = communicatorType;
-	}
+	
+	
+	
 	//
 	//
 	//
 	@Override
 	public void run() {
-		if(communicatorType.equals(Constants.SOCKET)) {
+		//Scoket
+		if(this.serverSocket != null) {
 			while(true) {
 				try {
 					System.out.println("SOCKET");
-					System.out.println("PUERTO " + serverSocket.getLocalPort());
+					System.out.println("PUERTO " + this.serverSocket.getLocalPort());
 					System.out.println("Escuchando...");
 					
 					Socket soc = serverSocket.accept();
 					System.out.println("Alguien se conecto");
 					
-					Thread hilo = new Thread(
-							new Session(serviceLocator, 
-							new CommunicatorConsole(soc.getOutputStream(), soc.getInputStream())));
+					Session session = new Session(
+							this.controllerLocator,
+							this.serviceLocator,
+							this.commandParser,
+							new CommunicatorSocket(soc));
 					
-					hilo.start();
+					session.run();
 				}
 				catch(Exception e) {
 					//No termino de decidir que pasa aca
 				}
 			}
 		}
-		else if(communicatorType.equals(Constants.CONSOLE)) {
+		//Consola
+		else{
 			System.out.println("CONSOLE");
 			System.out.println("Escuchando...");
 			//Crea logica para consola
 		}
-		else {
-			throw new CommunicatorException("Unrecognized communicator");
-		}
-		
 	}
 }

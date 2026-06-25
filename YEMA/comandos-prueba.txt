@@ -1,0 +1,2 @@
+car/add-car/speed=10&licensePlate=ABC
+car/get-car/licensePlate=ABC

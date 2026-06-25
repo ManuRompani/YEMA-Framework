@@ -1,0 +1,9 @@
+/**
+ * 
+ */
+/**
+ * 
+ */
+module AppAutos {
+	requires YEMA;
+}

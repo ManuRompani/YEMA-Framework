@@ -1,6 +1,5 @@
 package framework_controllers;
 
-import framework_controllers.BaseController;
 import exceptions.ServiceNotImplementedException;
 import java.util.HashMap;
 
@@ -9,6 +8,10 @@ public class ControllerLocator {
 	
 	public ControllerLocator() {
 		this.controllers = new HashMap<>();
+	}
+	
+	public void registerController(String resource, BaseController controller) {
+		this.controllers.put(resource.toLowerCase(), controller);
 	}
 	
 	

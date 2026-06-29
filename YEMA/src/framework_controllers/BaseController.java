@@ -7,7 +7,7 @@ import utils.Context;
 
 public abstract class BaseController{
 
-	public abstract Response Ejecutar(Command comand, Context context, ServiceLocator serviceLocator);
+	public abstract Response Ejecutar(Command comand, Context context);
 	
 	public abstract void iniciarServicios(ServiceLocator sl);
 }

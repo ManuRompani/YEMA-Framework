@@ -2,8 +2,11 @@ package utils;
 
 import java.util.HashMap;
 
+import model.UserBase;
+
 public class SessionData {
 	private HashMap<String, Object> attributes;	 
+	private UserBase user;
 	
 	public SessionData(String username) {
 		this.attributes = new HashMap<>();

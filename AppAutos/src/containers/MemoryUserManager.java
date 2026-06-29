@@ -1,10 +1,16 @@
-package services;
+package containers;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import interfaces.IUserManager;
 import model.UserBase;
+/*
+ * ================================================
+ * PERTENECE AL MODELO DE NEGOCIO, HAY QUE MOVERLO - HECHO
+ * ================================================
+ * 
+ */
 
 public class MemoryUserManager implements IUserManager {
 	private List<UserBase> listUsers = new ArrayList<UserBase>();
@@ -29,12 +35,21 @@ public class MemoryUserManager implements IUserManager {
 		return null;
 	}
 	
+	@Override
 	public void registerUser(UserBase user) {
 		this.listUsers.add(user);
 	}
 
-	public void removeUser(int id) {
-		this.listUsers.removeIf(u -> u.getId() == id);
+
+	@Override
+	public boolean userExists(String user) {
+		boolean result = false;
+		for(UserBase ub :listUsers) {
+			if(ub.getName().equals(user)) {
+				result = true;
+			}
+		}
+		return result;
 	}
 
 }

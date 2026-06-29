@@ -2,6 +2,7 @@ package mainsApp;
 
 import java.io.IOException;
 import containers.CarContainer;
+import containers.MemoryUserManager;
 import controllers.CarController;
 import services.YemaApp;
 import services.YemaAppBuilder;
@@ -19,6 +20,7 @@ public class Main {
 		
 		// servicios
 		builder.addService(new CarContainer());
+		builder.addService(new MemoryUserManager());
 		
 		YemaApp app = builder.build();
 		

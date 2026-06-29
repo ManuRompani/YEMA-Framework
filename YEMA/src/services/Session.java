@@ -1,6 +1,7 @@
 package services;
 
 import dtos.Command;
+import dtos.Credentials;
 import dtos.Response;
 import exceptions.InvalidCommandException;
 import exceptions.ServiceNotImplementedException;
@@ -35,13 +36,19 @@ public class Session implements Runnable {
 	//Este metodo se inicia cuando en Main se crea un nuevo hilo (linea 45)  - Yami
 	@Override
 	public void run() {	
-		//creamos un nuevo objeto response para guardar respuestas del servidor  - Yami
+
 		Response response = new Response();
 		
-		
-		//Paso 1: preguntamos al usuario quien es  - Yami
-		communicator.send("Ingrese su nombre: "); 
+
+		communicator.send("Ingrese su usuario: "); 
 		String username = communicator.receive();
+		
+		communicator.send("Ingrese su contraseña:");
+		String password = communicator.receive();
+		
+		Credentials creds = new Credentials(username, password);
+		if()		
+		
 		
 		//Paso 2: creamos un nuevo SessionData que recibe el nombre consultado y se lo asigna a esta sessionData y saludamos al usuario - Yami
 		this.sessionData = new SessionData(username);

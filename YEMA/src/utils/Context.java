@@ -16,4 +16,8 @@ public class Context {
 		return sessionData;
 	}
 	
+	public ServiceLocator getServiceLocator() {
+		return sl;
+	}
+	
 }

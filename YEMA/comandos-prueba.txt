@@ -1,2 +1,4 @@
 car/add-car/speed=10&licensePlate=ABC
+car/add-car/speed=0&licensePlate=ABD
 car/get-car/licensePlate=ABC
+car/get-cars

@@ -15,46 +15,49 @@ import utils.Context;
 public class CarController extends BaseController {
 	private CarContainer carContainer;
 	private CarSerializer serializer;
-	private CarDeserializer deserializer;
 	
 	public CarController() {
-		this.carContainer = carContainer;
 		this.serializer = new CarSerializer();
-		this.deserializer = new CarDeserializer();
 	}
-	
-	// AHORA EL CONTROLADOR RETORNA UN REPSONSE Y NO SE ENCARGA DE COMUNICADOR
-	// YA QUE ES 1 PARA CADA SESION!!!
-	// ejecuta la accion recibida en el comando, recuerden comando es ej: car/get-car/licensePlate=ABC
+
+	// El serviceL viaja dentro de context, ahora solo le pasamos la accion al switch
 	@Override
-	public Response Ejecutar(Command command, Context context, ServiceLocator serviceLocator){
-		//Obtenemos los servicios (en este caso solo el carcontainer)
-		try {			
-			this.carContainer = serviceLocator.getService(CarContainer.class);
-		}
-		catch(ServiceNotImplementedException e){
-			Response response = new Response();
-			response.setMessage("Ocurrió un error al tratar de obtener el servicio.");
-			return response;
-		}
+	public Response Ejecutar(Command command, Context context){
+		
+	
+		Response response = new Response();	
+		
 		switch(command.getAction()) {
+		case("get-cars"):
+			return this.getCars();
 			case("get-car"):
 				return this.getCarByLicensePlate(command.getParameter("licensePlate"));
 			case("add-car"):
 				return this.addCar( command.getParameter("speed"),
 									command.getParameter("licensePlate"),
 									context.getSessionData().getUserName() );
-				default:
-					Response response = new Response();
-					response.setMessage("No action was taken");
-					return response;
+			default:				
+				response.setMessage("No action was taken");
+				return response;
 		}
 	}
 	
 	//Acciones
 	private Response getCars(){
-		return null;
-		//return this.carContainer.getCarsList();
+		Response response = new Response();
+		String result ="";
+		for(Car car : carContainer.getCarsList()) {
+			result += this.serializer.serialize(car) + "\n";
+		}		
+		
+		if(result.isEmpty()) {
+			response.setMessage("No cars register");
+		}else {
+			response.setMessage(result);
+		}
+		
+		return response;
+		
 	}
 	
 	private Response getCarByLicensePlate(String license){
@@ -98,31 +101,12 @@ public class CarController extends BaseController {
 			return response;
 	}
 	
-	
-	
-	
-	/*--- VALIDACIONES ---*/
-
-	
-	private boolean existsCar(String licensePlate) {
-		return carContainer.getCarsList().stream().anyMatch(car -> car.getLicensePlate().equalsIgnoreCase(licensePlate));
-	}
-	
-	//Ayudas
-	private boolean isCarValid(Car car) {
-		
-		if(car == null) {
-			return false;
-		}		
-		
-		if(car.getLicensePlate() == null || car.getLicensePlate().trim().isEmpty()) {
-			return false;
-		}
-		
-		if(car.getSpeed() < 0) {
-			return false;
-		}
-		
-		return true;
+	@Override
+	public void iniciarServicios(ServiceLocator sl) {
+			try {
+				this.carContainer = sl.getService(CarContainer.class);
+			} catch (ServiceNotImplementedException e) {
+				throw new RuntimeException("Error crítico. Inicializacion de servicio " + e.getMessage() + " fallida.");
+			}
 	}
 }

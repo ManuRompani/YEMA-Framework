@@ -71,12 +71,9 @@ public class Session implements Runnable {
 				//Paso 8: Busco el controlador pasandole el recurso recibido en el comando
 				BaseController controller = this.controllerLocator.getController(command.getResource());
 				
-				//Paso 9: creamos un nuevo objeto contexto que recibe los datos de la sesion 
-				//y los conserva durante la misma, luego llamamos al controlador y ejecutamos
-				// pasandole el comando y el contexto, la respuesta de esa ejecucion la guardamos en
-				// la variable response para mostrar una respuesta al usuario - Yami
-				Context context = new Context(this.sessionData);
-				response = controller.Ejecutar(command, context, serviceLocator);	
+		
+				Context context = new Context(this.sessionData, this.serviceLocator);
+				response = controller.Ejecutar(command, context);	
 					
 				
 			} catch (InvalidCommandException e) {

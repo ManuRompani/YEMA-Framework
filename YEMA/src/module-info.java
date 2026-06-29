@@ -6,4 +6,5 @@ module YEMA {
 	exports framework_controllers;
 	exports dtos;
 	exports services;
+	exports model;
 }

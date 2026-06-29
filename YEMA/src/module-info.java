@@ -1,5 +1,4 @@
-module YEMA {
-	exports main;
+module YEMA {	
 	exports utils;
 	exports validators;
 	exports exceptions;

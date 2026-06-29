@@ -15,7 +15,7 @@ public class ServiceLocator {
 		T service = (T) dict.get(clazz);
 		
 		if(service == null) {
-			throw new ServiceNotImplementedException();
+			throw new ServiceNotImplementedException(clazz.getName());
 		}
 		
 		return service;

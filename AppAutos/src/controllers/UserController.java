@@ -41,6 +41,7 @@ public class UserController extends BaseController{
 			response.setMessage("Usuario no encontrado");
 		}else {
 			String userSerialized = this.serializer.serialize(ub);
+			//faltaria setear el response?
 		}
 		return response;
 	}

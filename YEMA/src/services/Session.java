@@ -1,5 +1,6 @@
 package services;
 
+import annotations.AuthorizedRoles;
 import dtos.Command;
 import dtos.Credentials;
 import dtos.Response;
@@ -10,6 +11,7 @@ import framework_controllers.BaseController;
 import framework_controllers.ControllerLocator;
 import interfaces.ICommunicator;
 import interfaces.IUserManager;
+import model.RoleBase;
 import model.UserBase;
 import utils.CommandParser;
 import utils.Context;
@@ -45,14 +47,20 @@ public class Session implements Runnable {
 			String resp="";
 			UserBase user;
 			Credentials creds;
-	
+			
+			//creo que para un futuro un switch viene mejor que tantos if, yami :)
 			try {
 				communicator.send("Bienvenido, estas registrado? Para finalizar escribi salir");
-				resp = communicator.receive();
+				resp = communicator.receive();		
 				
-				if(resp.equalsIgnoreCase("salir")) {
+				if(resp == null || resp.equalsIgnoreCase("salir") ) {
+					System.out.println("Cliente desconectado");
 					return;
 				}
+				
+				if(!resp.equalsIgnoreCase("si") && !resp.equalsIgnoreCase("no") && !resp.equalsIgnoreCase("salir")){					communicator.send("Debes responder si/no/salir");
+					continue;
+				}				
 				
 				// ======REGISTRO NUEVO USUARIO===========
 				if (resp.equalsIgnoreCase("no")) {
@@ -63,7 +71,8 @@ public class Session implements Runnable {
 					user = new UserBase(1, username, password, null);
 					serviceLocator.getService(IUserManager.class).registerUser(user);
 					communicator.send("Tu usuario "+ user.getName()+" fue creado con exito.");
-				}
+				}		
+												
 				
 				// ======INGRESO DE CREDENCIALES===========
 				communicator.send("Ingrese su usuario: ");
@@ -83,17 +92,20 @@ public class Session implements Runnable {
 						}
 			} catch (ServiceNotImplementedException e) {
 				response.setMessage("El servicio " + e.getMessage() + " no se encuentra.");
-			}catch (Exception e) {
-				response.setMessage("soy la excepcion");
+			}catch(Exception e) {
+				System.out.println("Cliente desconectado");
+				return;
 			}
 			
 			communicator.send(response.getMessage());
 		}
 
-		
+		Context context = new Context(this.sessionData, this.serviceLocator);
 		
 		// =======INGRESO DE COMANDOS===========
 		// Una vez el usuario se loguea con exito, entramos en loop de comandos.
+		
+		
 		while (true) {
 
 			String sMessage = communicator.receive();
@@ -108,9 +120,19 @@ public class Session implements Runnable {
 				}
 
 				Command command = parser.Parse(sMessage);
+				
 				BaseController controller = this.controllerLocator.getController(command.getResource());
-				Context context = new Context(this.sessionData, this.serviceLocator);
-				response = controller.Ejecutar(command, context);
+				
+				// Se valida que el usuario este autorizado a usar el controlador
+				//
+				// Lo valido en la sesion para que cada usuario se autogestione y no que 
+				// el controlador que todos comparten deba decir si esta o no autorizado
+				if(!this.isUserAuthorizedToUse(controller)) {
+					response.setMessage("Unauthorized access.");
+				}
+				else {
+					response = controller.Ejecutar(command, context);
+				}
 
 			} catch (InvalidCommandException e) {
 				response.setMessage(e.getMessage());
@@ -127,5 +149,31 @@ public class Session implements Runnable {
 
 		}
 
+	}
+	
+	private boolean isUserAuthorizedToUse(Object obj) {
+		boolean hasAnnotation = obj.getClass().isAnnotationPresent(AuthorizedRoles.class);
+
+	    if (!hasAnnotation) {
+	        return true;
+	    }
+	    
+	    RoleBase userRole = this.sessionData.getUser().getRole();
+	    
+	    if(userRole == null) {
+	    	return false;
+	    }
+	    
+	    AuthorizedRoles annotation = obj.getClass().getAnnotation(AuthorizedRoles.class);
+
+	    String[] roles = annotation.roles();
+
+	    for (String role : roles) {
+	        if (role.equals(userRole.getName())) {
+	            return true;
+	        }
+	    }
+
+	    return false;
 	}
 }

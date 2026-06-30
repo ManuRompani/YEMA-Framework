@@ -1,13 +1,18 @@
 package model;
 
+/* ============================
+ * Modelo base de un usuario
+ * del sistema. 
+ * =========================== */
+ 
 public class UserBase {
-	private String pass;
 	private int id;
 	private String name;
+	private String pass;		
 	private RoleBase role;
 	
 	
-	public UserBase(String pass, int id, String name, RoleBase role) {
+	public UserBase(int id, String name, String pass, RoleBase role) {
 		super();
 		this.pass = pass;
 		this.id = id;

@@ -24,5 +24,9 @@ public class ServiceLocator {
 	public void registerService(Object newObject) {
 		Class<?> clazz = newObject.getClass();
 		this.dict.put(clazz, newObject);
+		
+		for(Class<?> inface : clazz.getInterfaces()) {
+			this.dict.put(inface, newObject);
+		}
 	}
 }

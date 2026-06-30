@@ -47,14 +47,20 @@ public class Session implements Runnable {
 			String resp="";
 			UserBase user;
 			Credentials creds;
-	
+			
+			//creo que para un futuro un switch viene mejor que tantos if, yami :)
 			try {
 				communicator.send("Bienvenido, estas registrado? Para finalizar escribi salir");
-				resp = communicator.receive();
+				resp = communicator.receive();		
 				
-				if(resp.equalsIgnoreCase("salir")) {
+				if(resp == null || resp.equalsIgnoreCase("salir") ) {
+					System.out.println("Cliente desconectado");
 					return;
 				}
+				
+				if(!resp.equalsIgnoreCase("si") && !resp.equalsIgnoreCase("no") && !resp.equalsIgnoreCase("salir")){					communicator.send("Debes responder si/no/salir");
+					continue;
+				}				
 				
 				// ======REGISTRO NUEVO USUARIO===========
 				if (resp.equalsIgnoreCase("no")) {
@@ -65,7 +71,8 @@ public class Session implements Runnable {
 					user = new UserBase(1, username, password, null);
 					serviceLocator.getService(IUserManager.class).registerUser(user);
 					communicator.send("Tu usuario "+ user.getName()+" fue creado con exito.");
-				}
+				}		
+												
 				
 				// ======INGRESO DE CREDENCIALES===========
 				communicator.send("Ingrese su usuario: ");
@@ -85,15 +92,20 @@ public class Session implements Runnable {
 						}
 			} catch (ServiceNotImplementedException e) {
 				response.setMessage("El servicio " + e.getMessage() + " no se encuentra.");
+			}catch(Exception e) {
+				System.out.println("Cliente desconectado");
+				return;
 			}
 			
 			communicator.send(response.getMessage());
 		}
 
-		
+		Context context = new Context(this.sessionData, this.serviceLocator);
 		
 		// =======INGRESO DE COMANDOS===========
 		// Una vez el usuario se loguea con exito, entramos en loop de comandos.
+		
+		
 		while (true) {
 
 			String sMessage = communicator.receive();
@@ -119,11 +131,6 @@ public class Session implements Runnable {
 					response.setMessage("Unauthorized access.");
 				}
 				else {
-					// por que instaciamos context por cada ciclo?
-					// si le estamos pasando y solo usa objetos inmutables.
-					// si bien sessionData cambia, no es necesario instanciar nueamente context,
-					// con esa logica deberia instanciarse nuevamente sessionData
-					Context context = new Context(this.sessionData, this.serviceLocator);
 					response = controller.Ejecutar(command, context);
 				}
 

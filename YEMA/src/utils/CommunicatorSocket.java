@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+
+import exceptions.CommunicatorException;
 import interfaces.ICommunicator;
 
 public class CommunicatorSocket implements ICommunicator{
@@ -30,7 +32,7 @@ public class CommunicatorSocket implements ICommunicator{
 		try {
 			os.write(mensaje.getBytes());
 		} catch (IOException e) {
-			throw new RuntimeException(e.getMessage());			
+			throw new CommunicatorException(e.getMessage());		
 		}
 	}
 
@@ -42,7 +44,7 @@ public class CommunicatorSocket implements ICommunicator{
 			respuesta = command;
 			return respuesta;
 		}catch(IOException e) {
-			throw new RuntimeException("Error al recibir el mensaje" + e);
+			throw new CommunicatorException("Error al recibir el mensaje" + e);
 		}
 	}
 

@@ -83,6 +83,8 @@ public class Session implements Runnable {
 						}
 			} catch (ServiceNotImplementedException e) {
 				response.setMessage("El servicio " + e.getMessage() + " no se encuentra.");
+			}catch (Exception e) {
+				response.setMessage("soy la excepcion");
 			}
 			
 			communicator.send(response.getMessage());

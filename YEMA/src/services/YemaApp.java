@@ -59,7 +59,16 @@ public class YemaApp implements Runnable  {
 		else{
 			System.out.println("CONSOLE");
 			System.out.println("Escuchando...");
-			//Crea logica para consola
+			
+			CommunicatorConsole console = new CommunicatorConsole(System.out, System.in);
+			
+			Session session = new Session(
+					this.controllerLocator,
+					this.serviceLocator,
+					this.commandParser,
+					console);
+			
+			session.run();
 		}
 	}
 }

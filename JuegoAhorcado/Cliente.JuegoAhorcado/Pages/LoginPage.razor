@@ -1,0 +1,50 @@
+@page "/login"
+@layout GameLayout
+@inject NavigationManager Navigation
+
+<div class="login-page">
+    <a class="back-link" href="/">&#x2190; Volver al menú</a>
+
+    <div class="login-card">
+        <div class="login-icon">&#x1F3AE;</div>
+        <h1 class="login-title">Iniciá sesión</h1>
+        <p class="login-subtitle">Para jugar tenés que estar identificado</p>
+
+        <div class="auth-tabs">
+            <button class="auth-tab @(isLogin ? "active" : "")" @onclick="() => isLogin = true">Iniciar sesión</button>
+            <button class="auth-tab @(!isLogin ? "active" : "")" @onclick="() => isLogin = false">Registrarse</button>
+        </div>
+
+        <EditForm Model="model" OnValidSubmit="HandleSubmit">
+            <div class="form-group">
+                <label class="form-label">USUARIO</label>
+                <input class="form-input" type="text" placeholder="Tu nombre de usuario" @bind="model.Username" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">CONTRASEÑA</label>
+                <input class="form-input" type="password" placeholder="Tu contraseña" @bind="model.Password" />
+            </div>
+
+            <button type="submit" class="btn-submit">¡A jugar!</button>
+        </EditForm>
+
+        <p class="login-demo">Demo admin: <span>admin / admin123</span></p>
+    </div>
+</div>
+
+@code {
+    private bool isLogin = true;
+    private LoginModel model = new();
+
+    private void HandleSubmit()
+    {
+        Navigation.NavigateTo("/jugar");
+    }
+
+    public class LoginModel
+    {
+        public string Username { get; set; } = "";
+        public string Password { get; set; } = "";
+    }
+}

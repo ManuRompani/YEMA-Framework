@@ -48,7 +48,8 @@ public class YemaApp implements Runnable  {
 							this.commandParser,
 							new CommunicatorSocket(soc));
 					
-					session.run();//Este no crearia un solo hilo? no deberiamos crear un hilo por cada sesion?
+					 Thread hilo = new Thread(session);
+				        hilo.start();
 				}
 				catch(Exception e) {
 					System.out.println(e.getMessage());

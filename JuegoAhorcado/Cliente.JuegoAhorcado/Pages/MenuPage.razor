@@ -1,0 +1,35 @@
+@page "/"
+@layout GameLayout
+@inject NavigationManager Navigation
+
+<div class="menu-page">
+    <button class="menu-login-btn" @onclick="GoToLogin">Iniciar sesión</button>
+
+    <div class="menu-icon">&#x1F4FF;</div>
+    <h1 class="menu-title">EL AHORCADO</h1>
+    <p class="menu-subtitle">¡SALVÁ AL PIBE ANTES QUE SEA TARDE!</p>
+
+    <div class="menu-buttons">
+        <button class="btn-play primary" @onclick="GoToPlay">&#x26A1; Jugar</button>
+        <button class="btn-play secondary" @onclick="GoToPositions">&#x1F3C6; Ver Posiciones</button>
+    </div>
+
+    <div class="menu-footer">A B C D E F G H I J K L M N Ñ O P Q R S T U V W X Y Z</div>
+</div>
+
+@code {
+    private void GoToLogin()
+    {
+        Navigation.NavigateTo("/login");
+    }
+
+    private void GoToPlay()
+    {
+        Navigation.NavigateTo("/login");
+    }
+
+    private void GoToPositions()
+    {
+        Navigation.NavigateTo("/posiciones");
+    }
+}

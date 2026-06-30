@@ -27,12 +27,8 @@ public class YemaApp implements Runnable  {
 		this.controllerLocator = controllerLocator;
 		this.serverSocket = serverSocket;
 	}
+
 	
-	
-	
-	//
-	//
-	//
 	@Override
 	public void run() {
 		//Scoket

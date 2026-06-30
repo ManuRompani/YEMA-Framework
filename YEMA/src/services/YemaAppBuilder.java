@@ -12,7 +12,7 @@ public class YemaAppBuilder {
 	private ControllerLocator controllerLocator = null;
 	private String communicatorType = Constants.SOCKET;	
 	private ServerSocket serverSocket = null;
-	private int socketPort = 80;
+	private int socketPort = 8080;
 
 	
 	// CONFIGURACION DE CONSOLA

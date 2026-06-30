@@ -3,6 +3,10 @@ package containers;
 import java.util.ArrayList;
 import java.util.List;
 
+import dtos.Command;
+import dtos.Credentials;
+import dtos.Response;
+import framework_controllers.BaseController;
 import interfaces.IUserManager;
 import model.UserBase;
 /*
@@ -11,6 +15,8 @@ import model.UserBase;
  * ================================================
  * 
  */
+import services.ServiceLocator;
+import utils.Context;
 
 public class MemoryUserManager implements IUserManager {
 	private List<UserBase> listUsers = new ArrayList<UserBase>();
@@ -25,10 +31,14 @@ public class MemoryUserManager implements IUserManager {
 		return null;
 	}
 	
+	public ArrayList<UserBase> getUsersList(){
+		return new ArrayList<UserBase>(this.listUsers);
+	}
+	
 	@Override
-	public UserBase authenticate(String username, String password) {
+	public UserBase authenticate(Credentials creds) {
 		for (UserBase ub : listUsers) {
-			if (ub.getName().equals(username) && ub.getPass().equals(password)) {
+			if (ub.getName().equals(creds.getUsername()) && ub.getPass().equals(creds.getPassword())) {
 				return ub;
 			}
 		}
@@ -51,5 +61,7 @@ public class MemoryUserManager implements IUserManager {
 		}
 		return result;
 	}
+
+	
 
 }

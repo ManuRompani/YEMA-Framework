@@ -51,7 +51,7 @@ public class YemaApp implements Runnable  {
 					session.run();
 				}
 				catch(Exception e) {
-					//No termino de decidir que pasa aca
+					System.out.println(e.getMessage());
 				}
 			}
 		}

@@ -1,0 +1,139 @@
+<div class="admin-header">
+    <h2 class="admin-section-title">Palabras <span>(@Words.Count)</span></h2>
+    <button class="btn-add" @onclick="ShowAddForm">+ Agregar</button>
+</div>
+
+@if (showForm)
+{
+    <div class="admin-form-card">
+        <div class="admin-form-title">NUEVA PALABRA</div>
+        <div class="admin-form-row">
+            <div class="admin-form-group">
+                <label>PALABRA *</label>
+                <input type="text" placeholder="EJEMPLO" @bind="formWord" />
+            </div>
+            <div class="admin-form-group">
+                <label>PISTA *</label>
+                <input type="text" placeholder="Descripción..." @bind="formHint" />
+            </div>
+            <div class="admin-form-group">
+                <label>CATEGORÍA</label>
+                <input type="text" placeholder="Ej: Gastronomía" @bind="formCategory" />
+            </div>
+        </div>
+        <div class="admin-form-buttons">
+            <button class="btn-save" @onclick="AddWord">Agregar</button>
+            <button class="btn-cancel" @onclick="CancelForm">Cancelar</button>
+        </div>
+    </div>
+}
+
+<table class="admin-table">
+    <thead>
+        <tr>
+            <th>PALABRA</th>
+            <th>LETS.</th>
+            <th>CATEGORÍA</th>
+            <th>PISTA</th>
+            <th>ACCIONES</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var word in Words)
+        {
+            <tr>
+                <td class="word">@word.Name</td>
+                <td>@word.Name.Length</td>
+                <td class="category">@word.Category</td>
+                <td class="hint">@word.Hint</td>
+                <td class="actions">
+                    <button class="btn-edit" @onclick="() => EditWord(word)">Editar</button>
+                    <button class="btn-delete" @onclick="() => DeleteWord(word)">Borrar</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private bool showForm = false;
+    private string formWord = "";
+    private string formHint = "";
+    private string formCategory = "";
+
+    private List<WordEntry> Words = new()
+    {
+        new() { Name = "MATE", Category = "Cultura", Hint = "Bebida típica argentina que se toma con bombilla" },
+        new() { Name = "EMPANADA", Category = "Gastronomía", Hint = "Masa rellena horneada o frita, plato nacional" },
+        new() { Name = "ASADO", Category = "Gastronomía", Hint = "El plato más amado, cocinado a las brasas" },
+        new() { Name = "CHIMICHURRI", Category = "Gastronomía", Hint = "Salsa verde y picante para acompañar la carne" },
+        new() { Name = "FUTBOL", Category = "Deporte", Hint = "El deporte más popular del mundo" },
+        new() { Name = "QUILOMBO", Category = "Lunfardo", Hint = "Gran desorden o lío" },
+        new() { Name = "FIACA", Category = "Lunfardo", Hint = "Pereza, ganas de no hacer nada" },
+        new() { Name = "PIBE", Category = "Lunfardo", Hint = "Chico joven, preadolescente" },
+        new() { Name = "BONDI", Category = "Lunfardo", Hint = "El colectivo porteño" },
+        new() { Name = "CHAMUYO", Category = "Lunfardo", Hint = "Palabrería para convencer o seducir" },
+        new() { Name = "BANDONEON", Category = "Música", Hint = "Instrumento central e indispensable del tango" },
+        new() { Name = "PERONISMO", Category = "Historia", Hint = "Movimiento político fundado en los años 40" },
+        new() { Name = "PATAGONIA", Category = "Geografía", Hint = "Región del sur del país, famosa por su naturaleza" },
+        new() { Name = "DULCEDELECHE", Category = "Gastronomía", Hint = "El manjar más amado, infaltable en las facturas" },
+        new() { Name = "LOCRO", Category = "Gastronomía", Hint = "Guiso patrio del norte, ideal para el 25 de mayo" },
+        new() { Name = "CUMBIA", Category = "Música", Hint = "Género musical bailable muy popular" },
+        new() { Name = "MILANESA", Category = "Gastronomía", Hint = "Carne empanizada y frita, clásica del almuerzo" },
+        new() { Name = "GELATINA", Category = "Gastronomía", Hint = "Postre frío y colorado, favorito de las fiestas" },
+        new() { Name = "TANGO", Category = "Música", Hint = "Baile y género musical emblemático de Buenos Aires" },
+        new() { Name = "PELOTA", Category = "Deporte", Hint = "Objeto esférico usado en casi todos los deportes" },
+        new() { Name = "YERBA", Category = "Cultura", Hint = "Planta base de la bebida nacional argentina" },
+        new() { Name = "PROVINCIA", Category = "Geografía", Hint = "División territorial del país" },
+        new() { Name = "ÑOQUIS", Category = "Gastronomía", Hint = "Pastas caseras, típicas del 29 de cada mes" },
+        new() { Name = "MURCIÉLAGO", Category = "Naturaleza", Hint = "Mamífero volador que sale de noche" },
+        new() { Name = "ALFajor", Category = "Gastronomía", Hint = "Golosina de dos tapas y relleno, icono nacional" }
+    };
+
+    private void ShowAddForm()
+    {
+        showForm = true;
+        formWord = "";
+        formHint = "";
+        formCategory = "";
+    }
+
+    private void CancelForm()
+    {
+        showForm = false;
+    }
+
+    private void AddWord()
+    {
+        if (!string.IsNullOrWhiteSpace(formWord) && !string.IsNullOrWhiteSpace(formHint))
+        {
+            Words.Insert(0, new WordEntry
+            {
+                Name = formWord.ToUpper(),
+                Category = formCategory,
+                Hint = formHint
+            });
+            showForm = false;
+        }
+    }
+
+    private void EditWord(WordEntry word)
+    {
+        formWord = word.Name;
+        formHint = word.Hint;
+        formCategory = word.Category;
+        showForm = true;
+    }
+
+    private void DeleteWord(WordEntry word)
+    {
+        Words.Remove(word);
+    }
+
+    public class WordEntry
+    {
+        public string Name { get; set; } = "";
+        public string Category { get; set; } = "";
+        public string Hint { get; set; } = "";
+    }
+}

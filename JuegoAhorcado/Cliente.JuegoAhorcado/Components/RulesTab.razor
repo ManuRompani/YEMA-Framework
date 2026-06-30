@@ -1,0 +1,118 @@
+<div class="admin-header">
+    <h2 class="admin-section-title">Reglas de Puntuación</h2>
+</div>
+
+<p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.85rem;">
+    Configurá cuántos puntos vale cada palabra según su longitud. El bonus se aplica cuando el jugador no pierde ninguna vida en la ronda.
+</p>
+
+<div class="rules-list">
+    @foreach (var rule in Rules.Select((r, i) => new { r, index = i }))
+    {
+        @if (editingRuleIndex == rule.index)
+        {
+            <div class="admin-form-card">
+                <div class="admin-form-row">
+                    <div class="admin-form-group">
+                        <label>ETIQUETA</label>
+                        <input type="text" @bind="editLabel" />
+                    </div>
+                    <div class="admin-form-group">
+                        <label>LONGITUD MÍN.</label>
+                        <input type="number" @bind="editMinLen" />
+                    </div>
+                    <div class="admin-form-group">
+                        <label>LONGITUD MÁX.</label>
+                        <input type="number" @bind="editMaxLen" />
+                    </div>
+                </div>
+                <div class="admin-form-row">
+                    <div class="admin-form-group">
+                        <label>PUNTOS BASE</label>
+                        <input type="number" @bind="editBasePts" />
+                    </div>
+                    <div class="admin-form-group">
+                        <label>BONUS (SIN ERRORES)</label>
+                        <input type="number" @bind="editBonusPts" />
+                    </div>
+                </div>
+                <div class="admin-form-buttons">
+                    <button class="btn-save" @onclick="SaveRule">Guardar</button>
+                    <button class="btn-cancel" @onclick="CancelEdit">Cancelar</button>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="rule-card">
+                <div class="rule-info">
+                    <div class="rule-title">@rule.r.Label</div>
+                    <div class="rule-details">
+                        Longitud: @(rule.r.MinLen)@(rule.r.MaxLen == 999 ? "+ " : $"–{rule.r.MaxLen} ") letras
+                        <span class="pts">@rule.r.BasePoints pts base</span>
+                        <span class="bonus">+@rule.r.BonusPoints bonus</span>
+                    </div>
+                </div>
+                <button class="btn-rule-edit" @onclick="() => StartEdit(rule.index)">Editar</button>
+            </div>
+        }
+    }
+</div>
+
+<div class="info-banner">
+    <span class="label">&#x1F4A1; Ejemplo:</span> Si querés que las palabras de más de 5 letras valgan 20 puntos, editá la regla "Palabras medias" y cambiá los puntos base a 20.
+</div>
+
+@code {
+    private int editingRuleIndex = -1;
+    private string editLabel = "";
+    private int editMinLen;
+    private int editMaxLen;
+    private int editBasePts;
+    private int editBonusPts;
+
+    private List<ScoreRule> Rules = new()
+    {
+        new() { Label = "Palabras cortas (1–4 letras)", MinLen = 1, MaxLen = 4, BasePoints = 10, BonusPoints = 5 },
+        new() { Label = "Palabras medias (5–7 letras)", MinLen = 5, MaxLen = 7, BasePoints = 20, BonusPoints = 10 },
+        new() { Label = "Palabras largas (8+ letras)", MinLen = 8, MaxLen = 999, BasePoints = 30, BonusPoints = 15 }
+    };
+
+    private void StartEdit(int index)
+    {
+        editingRuleIndex = index;
+        var rule = Rules[index];
+        editLabel = rule.Label;
+        editMinLen = rule.MinLen;
+        editMaxLen = rule.MaxLen == 999 ? 8 : rule.MaxLen;
+        editBasePts = rule.BasePoints;
+        editBonusPts = rule.BonusPoints;
+    }
+
+    private void SaveRule()
+    {
+        if (editingRuleIndex >= 0 && editingRuleIndex < Rules.Count)
+        {
+            Rules[editingRuleIndex].Label = editLabel;
+            Rules[editingRuleIndex].MinLen = editMinLen;
+            Rules[editingRuleIndex].MaxLen = editMaxLen == 8 && Rules[editingRuleIndex].MaxLen == 999 ? 999 : editMaxLen;
+            Rules[editingRuleIndex].BasePoints = editBasePts;
+            Rules[editingRuleIndex].BonusPoints = editBonusPts;
+        }
+        editingRuleIndex = -1;
+    }
+
+    private void CancelEdit()
+    {
+        editingRuleIndex = -1;
+    }
+
+    public class ScoreRule
+    {
+        public string Label { get; set; } = "";
+        public int MinLen { get; set; }
+        public int MaxLen { get; set; }
+        public int BasePoints { get; set; }
+        public int BonusPoints { get; set; }
+    }
+}

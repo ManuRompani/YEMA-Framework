@@ -1,0 +1,77 @@
+@page "/posiciones"
+@layout GameLayout
+@inject NavigationManager Navigation
+
+<div class="positions-page">
+    <a class="back-link" href="/">&#x2190; Volver al menú</a>
+
+    <div class="positions-header">
+        <div class="positions-trophy">&#x1F3C6;</div>
+        <h1 class="positions-title">Tabla de Posiciones</h1>
+        <p class="positions-subtitle">Los cracks del ahorcado argentino</p>
+    </div>
+
+    <table class="positions-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>JUGADOR</th>
+                <th>RONDAS</th>
+                <th>PUNTOS</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var player in Players.Select((p, i) => new { p, index = i }))
+            {
+                <tr>
+                    <td>
+                        @if (player.index == 0)
+                        {
+                            <span class="rank-medal">&#x1F947;</span>
+                        }
+                        else if (player.index == 1)
+                        {
+                            <span class="rank-medal">&#x1F948;</span>
+                        }
+                        else if (player.index == 2)
+                        {
+                            <span class="rank-medal">&#x1F949;</span>
+                        }
+                        else
+                        {
+                            <span class="rank-number">@(player.index + 1)</span>
+                        }
+                    </td>
+                    <td><span class="player-name">@player.p.Name</span></td>
+                    <td><span class="rounds-played">@player.p.Rounds</span></td>
+                    <td><span class="player-points">@player.p.Points</span></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button class="btn-play-now" @onclick="GoToPlay">&#x26A1; Jugar ahora</button>
+</div>
+
+@code {
+    private List<PlayerEntry> Players = new()
+    {
+        new() { Name = "marito", Rounds = 8, Points = 210 },
+        new() { Name = "carlitos", Rounds = 6, Points = 150 },
+        new() { Name = "lauchita99", Rounds = 4, Points = 110 },
+        new() { Name = "juancho_bsas", Rounds = 3, Points = 80 },
+        new() { Name = "sole_baires", Rounds = 2, Points = 50 }
+    };
+
+    private void GoToPlay()
+    {
+        Navigation.NavigateTo("/login");
+    }
+
+    public class PlayerEntry
+    {
+        public string Name { get; set; } = "";
+        public int Rounds { get; set; }
+        public int Points { get; set; }
+    }
+}

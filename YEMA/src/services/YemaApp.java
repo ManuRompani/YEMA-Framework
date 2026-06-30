@@ -48,7 +48,8 @@ public class YemaApp implements Runnable  {
 							this.commandParser,
 							new CommunicatorSocket(soc));
 					
-					session.run();
+					 Thread hilo = new Thread(session);
+				        hilo.start();
 				}
 				catch(Exception e) {
 					System.out.println(e.getMessage());

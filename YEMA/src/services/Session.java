@@ -1,5 +1,6 @@
 package services;
 
+import annotations.AuthorizedRoles;
 import dtos.Command;
 import dtos.Credentials;
 import dtos.Response;
@@ -10,6 +11,7 @@ import framework_controllers.BaseController;
 import framework_controllers.ControllerLocator;
 import interfaces.ICommunicator;
 import interfaces.IUserManager;
+import model.RoleBase;
 import model.UserBase;
 import utils.CommandParser;
 import utils.Context;
@@ -106,9 +108,24 @@ public class Session implements Runnable {
 				}
 
 				Command command = parser.Parse(sMessage);
+				
 				BaseController controller = this.controllerLocator.getController(command.getResource());
-				Context context = new Context(this.sessionData, this.serviceLocator);
-				response = controller.Ejecutar(command, context);
+				
+				// Se valida que el usuario este autorizado a usar el controlador
+				//
+				// Lo valido en la sesion para que cada usuario se autogestione y no que 
+				// el controlador que todos comparten deba decir si esta o no autorizado
+				if(!this.isUserAuthorizedToUse(controller)) {
+					response.setMessage("Unauthorized access.");
+				}
+				else {
+					// por que instaciamos context por cada ciclo?
+					// si le estamos pasando y solo usa objetos inmutables.
+					// si bien sessionData cambia, no es necesario instanciar nueamente context,
+					// con esa logica deberia instanciarse nuevamente sessionData
+					Context context = new Context(this.sessionData, this.serviceLocator);
+					response = controller.Ejecutar(command, context);
+				}
 
 			} catch (InvalidCommandException e) {
 				response.setMessage(e.getMessage());
@@ -125,5 +142,31 @@ public class Session implements Runnable {
 
 		}
 
+	}
+	
+	private boolean isUserAuthorizedToUse(Object obj) {
+		boolean hasAnnotation = obj.getClass().isAnnotationPresent(AuthorizedRoles.class);
+
+	    if (!hasAnnotation) {
+	        return true;
+	    }
+	    
+	    RoleBase userRole = this.sessionData.getUser().getRole();
+	    
+	    if(userRole == null) {
+	    	return false;
+	    }
+	    
+	    AuthorizedRoles annotation = obj.getClass().getAnnotation(AuthorizedRoles.class);
+
+	    String[] roles = annotation.roles();
+
+	    for (String role : roles) {
+	        if (role.equals(userRole.getName())) {
+	            return true;
+	        }
+	    }
+
+	    return false;
 	}
 }

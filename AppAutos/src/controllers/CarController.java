@@ -1,7 +1,7 @@
 package controllers;
 
 import appautos_utils.CarSerializer;
-import appautos_utils.CarDeserializer;
+import annotations.AuthorizedRoles;
 import containers.CarContainer;
 import dtos.Command;
 import dtos.Response;
@@ -9,9 +9,9 @@ import exceptions.ServiceNotImplementedException;
 import framework_controllers.BaseController;
 import models.Car;
 import services.ServiceLocator;
-import utils.CommunicatorConsole;
 import utils.Context;
 
+@AuthorizedRoles(roles = "admin")
 public class CarController extends BaseController {
 	private CarContainer carContainer;
 	private CarSerializer serializer;

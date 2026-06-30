@@ -7,4 +7,5 @@ module YEMA {
 	exports dtos;
 	exports services;
 	exports model;
+	exports annotations;
 }

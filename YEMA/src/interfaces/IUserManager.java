@@ -1,6 +1,7 @@
 package interfaces;
 import java.util.List;
 
+import annotations.AuthorizedRoles;
 import dtos.Credentials;
 import model.UserBase;
 

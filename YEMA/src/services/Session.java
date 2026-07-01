@@ -109,6 +109,11 @@ public class Session implements Runnable {
 		while (true) {
 
 			String sMessage = communicator.receive();
+			
+			if (sMessage == null) {
+			    System.out.println("Cliente desconectado");
+			    return;
+			}
 
 			try {
 				System.out.println(sMessage);

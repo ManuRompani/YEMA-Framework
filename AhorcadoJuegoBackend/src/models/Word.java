@@ -2,10 +2,10 @@ package models;
 
 public class Word {
 	private String name;
-	private String category;
+	private WordCategory category;
 	private String hint;
 	
-	public Word(String name, String category, String hint) {
+	public Word(String name, WordCategory category, String hint) {
 		super();
 		this.name = name;
 		this.category = category;
@@ -20,11 +20,11 @@ public class Word {
 		this.name = name;
 	}
 
-	public String getCategory() {
+	public WordCategory getCategory() {
 		return category;
 	}
 
-	public void setCategory(String category) {
+	public void setCategory(WordCategory category) {
 		this.category = category;
 	}
 

@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "Cliente.JuegoAhorcado",
   "resources": {
-    "hash": "sha256-F94BLb8JQPo3LEeyqZirxNgDd5ai5003iT9EO1OjeCE=",
+    "hash": "sha256-SeiHtO4+iTo3jQmbr7Ijxa7q82T4Ejib1jdo1UgJcHQ=",
     "fingerprinting": {
       "Microsoft.AspNetCore.Authorization.pfbiju6amj.wasm": "Microsoft.AspNetCore.Authorization.wasm",
       "Microsoft.AspNetCore.Components.810mhbyxc5.wasm": "Microsoft.AspNetCore.Components.wasm",
@@ -201,8 +201,8 @@
       "icudt_CJK.tjcz0u77k5.dat": "icudt_CJK.dat",
       "icudt_EFIGS.tptq2av103.dat": "icudt_EFIGS.dat",
       "icudt_no_CJK.lfu7j35m59.dat": "icudt_no_CJK.dat",
-      "Cliente.JuegoAhorcado.yw9ax5jt58.wasm": "Cliente.JuegoAhorcado.wasm",
-      "Cliente.JuegoAhorcado.jyjlhxks0y.pdb": "Cliente.JuegoAhorcado.pdb"
+      "Cliente.JuegoAhorcado.35r0r26bu5.wasm": "Cliente.JuegoAhorcado.wasm",
+      "Cliente.JuegoAhorcado.omcof45u5y.pdb": "Cliente.JuegoAhorcado.pdb"
     },
     "jsModuleNative": {
       "dotnet.native.qc8g39g30v.js": "sha256-SvVveFrqwSE/8qjn/DA3aVnuMXhmK4Ln+euLxQu8azU="
@@ -412,10 +412,10 @@
       "WindowsBase.5kidsc9cwj.wasm": "sha256-NXuFeS6KFuUEtK1L1ceaBLGv312S++f1mR9Kto+Hy18=",
       "mscorlib.xijg4wlfka.wasm": "sha256-2dqEBrWjuT5attumE5+LUeFO1cctfy00HBENhAlT9BY=",
       "netstandard.kp5ley9tiy.wasm": "sha256-KHbuelfx0rNF1OUK5LTGk1sytSnmzL/Ew2Dy2d+dZ8E=",
-      "Cliente.JuegoAhorcado.yw9ax5jt58.wasm": "sha256-Tkq1CPFEeRffgnMIJJRMlrjUoSvR71i28fJJ1xKUSe8="
+      "Cliente.JuegoAhorcado.35r0r26bu5.wasm": "sha256-Z+xSCxy+Bo4kdU3MoZQc1ZDseopkjxs2RuRVVV7r1h8="
     },
     "pdb": {
-      "Cliente.JuegoAhorcado.jyjlhxks0y.pdb": "sha256-tZKJMxhcVo+XIIUtTzDPY+77p1bFqj4vCeIbvj4+CmE="
+      "Cliente.JuegoAhorcado.omcof45u5y.pdb": "sha256-ENv/mx9uiyzfkZIqSWwnZNNbEI4ccCIUmwDQDjKKL9Q="
     }
   },
   "cacheBootResources": true,

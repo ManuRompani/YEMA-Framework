@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Cliente.JuegoAhorcado")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c4ef382856c0b27c2bc08b853ad4e6acd7ee9d67")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+020075d399c72a021b462fed2f784302c8164a51")]
 [assembly: System.Reflection.AssemblyProductAttribute("Cliente.JuegoAhorcado")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Cliente.JuegoAhorcado")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1757,23 +1757,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\n": {},
+    "C:\\Users\\emili\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Usuario\\Estudios\\ProgramacionUNLZ\\Cuarto-Cuatrimestre\\Java\\YEMA-Framework\\JuegoAhorcado\\Cliente.JuegoAhorcado\\Cliente.JuegoAhorcado.csproj",
+      "projectUniqueName": "C:\\Users\\emili\\Desktop\\TECNOLOGIA JAVA\\YEMA PROYECT\\YEMA-Framework\\JuegoAhorcado\\Cliente.JuegoAhorcado\\Cliente.JuegoAhorcado.csproj",
       "projectName": "Cliente.JuegoAhorcado",
-      "projectPath": "C:\\Users\\Usuario\\Estudios\\ProgramacionUNLZ\\Cuarto-Cuatrimestre\\Java\\YEMA-Framework\\JuegoAhorcado\\Cliente.JuegoAhorcado\\Cliente.JuegoAhorcado.csproj",
-      "packagesPath": "C:\\n",
-      "outputPath": "C:\\Users\\Usuario\\Estudios\\ProgramacionUNLZ\\Cuarto-Cuatrimestre\\Java\\YEMA-Framework\\JuegoAhorcado\\Cliente.JuegoAhorcado\\obj\\",
+      "projectPath": "C:\\Users\\emili\\Desktop\\TECNOLOGIA JAVA\\YEMA PROYECT\\YEMA-Framework\\JuegoAhorcado\\Cliente.JuegoAhorcado\\Cliente.JuegoAhorcado.csproj",
+      "packagesPath": "C:\\Users\\emili\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\emili\\Desktop\\TECNOLOGIA JAVA\\YEMA PROYECT\\YEMA-Framework\\JuegoAhorcado\\Cliente.JuegoAhorcado\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Usuario\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\emili\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],

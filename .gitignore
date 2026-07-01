@@ -36,3 +36,8 @@ BundleArtifacts/
 hs_err_pid*
 replay_pid*
 /.metadata/
+
+
+.vs/
+bin/
+obj/

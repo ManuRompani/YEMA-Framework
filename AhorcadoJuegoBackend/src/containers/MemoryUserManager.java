@@ -1,25 +1,14 @@
 package containers;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import dtos.Command;
 import dtos.Credentials;
-import dtos.Response;
-import framework_controllers.BaseController;
 import interfaces.IUserManager;
 import model.UserBase;
-/*
- * ================================================
- * PERTENECE AL MODELO DE NEGOCIO, HAY QUE MOVERLO - HECHO
- * ================================================
- * 
- */
-import services.ServiceLocator;
-import utils.Context;
+import models.Player;
+
 
 public class MemoryUserManager implements IUserManager {
-	private List<UserBase> listUsers = new ArrayList<UserBase>();
+	private List<Player> listUsers = new ArrayList<Player>();
 
 	@Override
 	public UserBase getUser(String username) {
@@ -33,7 +22,7 @@ public class MemoryUserManager implements IUserManager {
 	
 	public ArrayList<UserBase> getUsersList(){
 		return new ArrayList<UserBase>(this.listUsers);
-	}
+	}	
 	
 	@Override
 	public UserBase authenticate(Credentials creds) {
@@ -47,9 +36,16 @@ public class MemoryUserManager implements IUserManager {
 	
 	@Override
 	public void registerUser(UserBase user) {
-		this.listUsers.add(user);
+		Player player = new Player(
+				user.getId(), 
+				user.getName(),
+				user.getPass(),
+				user.getRole(),
+				0,
+				0
+				);
+		this.listUsers.add(player);
 	}
-
 
 	@Override
 	public boolean userExists(String user) {
@@ -62,6 +58,13 @@ public class MemoryUserManager implements IUserManager {
 		return result;
 	}
 
+	public ArrayList<Player> getPlayersList(){
+	ArrayList<Player> players = new ArrayList<Player>();
+	for(UserBase ub : this.listUsers) {
+		players.add((Player)ub);
+	}
 	
-
+	return players;
+	}
+	
 }

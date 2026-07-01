@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import containers.MemoryUserManager;
 import containers.ScoreContainer;
+import containers.WordCategoryContainer;
 import containers.WordContainer;
 import controllers.ScoreController;
 import controllers.WordsController;
@@ -26,6 +27,7 @@ public class Main {
 		
 		builder.addService(userManager);;
 		builder.addService(new WordContainer());
+		builder.addService(new WordCategoryContainer());
 		builder.addService(new ScoreContainer(userManager));
 		YemaApp app = builder.build();
 		

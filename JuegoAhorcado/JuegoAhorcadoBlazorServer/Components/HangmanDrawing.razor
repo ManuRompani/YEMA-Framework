@@ -1,0 +1,45 @@
+@rendermode InteractiveServer
+
+<svg class="hangman-svg" viewBox="0 0 140 150">
+    <!-- Gallows -->
+    <line class="gallows" x1="10" y1="145" x2="130" y2="145" />
+    <line class="gallows" x1="40" y1="145" x2="40" y2="15" />
+    <line class="gallows" x1="40" y1="15" x2="90" y2="15" />
+    <line class="gallows" x1="90" y1="15" x2="90" y2="30" />
+
+    @if (Errors >= 1)
+    {
+        <!-- Head -->
+        <circle cx="90" cy="42" r="12" />
+    }
+    @if (Errors >= 2)
+    {
+        <!-- Body -->
+        <line x1="90" y1="54" x2="90" y2="90" />
+    }
+    @if (Errors >= 3)
+    {
+        <!-- Left Arm -->
+        <line x1="90" y1="62" x2="70" y2="78" />
+    }
+    @if (Errors >= 4)
+    {
+        <!-- Right Arm -->
+        <line x1="90" y1="62" x2="110" y2="78" />
+    }
+    @if (Errors >= 5)
+    {
+        <!-- Left Leg -->
+        <line x1="90" y1="90" x2="72" y2="115" />
+    }
+    @if (Errors >= 6)
+    {
+        <!-- Right Leg -->
+        <line x1="90" y1="90" x2="108" y2="115" />
+    }
+</svg>
+
+@code {
+    [Parameter]
+    public int Errors { get; set; }
+}

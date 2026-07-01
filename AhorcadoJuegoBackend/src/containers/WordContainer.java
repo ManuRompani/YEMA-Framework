@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Stream;
+
 import models.Word;
 import validators.StringValidator;
 import exceptions.ValidatorException;
@@ -12,7 +14,7 @@ import models.Word;
 
 public class WordContainer {
 	private ArrayList<Word> wordsList;
-	private ArrayList<String> categoryList;
+	private List<String> categoryList;
 	private Random random;
 	
 	public WordContainer() {
@@ -20,6 +22,7 @@ public class WordContainer {
 		this.random = new Random();
 		this.categoryList = new ArrayList<String>();
 		loadDefaultWords();
+		loadDefaultCategories();
 	}
 	
 	private void loadDefaultWords() {
@@ -44,6 +47,18 @@ public class WordContainer {
         wordsList.add(new Word("PELOTA", "Deporte", "Objeto esférico usado en deportes"));
         wordsList.add(new Word("YERBA", "Cultura", "Planta base de la bebida nacional"));
     }
+	
+	private void loadDefaultCategories() {
+		categoryList.addAll(List.of(
+			"Cultura",
+			"Gastronomía",
+			"Deporte",
+			"Lunfardo",
+			"Música",
+			"Historia",
+			"Geografía"
+		));
+	}
 	
 	public Word getRandomWord() {
 		if (wordsList.isEmpty()) {
@@ -71,14 +86,8 @@ public class WordContainer {
 		return filtered;
 	}
 	
-	public ArrayList<String> getCategories() {
-	    ArrayList<String> categories = new ArrayList<>(categoryList);
-	    for (Word word : wordsList) {
-	        if (!categories.contains(word.getCategory())) {
-	            categories.add(word.getCategory());
-	        }
-	    }
-	    return categories;
+	public List<String> getCategories() {
+		return this.categoryList.stream().toList();
 	}
 	
 	//@admin //dejamos el throw o un trycatch?

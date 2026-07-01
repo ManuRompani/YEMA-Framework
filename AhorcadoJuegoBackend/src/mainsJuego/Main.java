@@ -20,9 +20,12 @@ public class Main {
 		
 		builder.addController("words", new WordsController());
 		builder.addController("score", new ScoreController());
+		
 		builder.addService(new WordContainer());
 		builder.addService(new ScoreContainer());
+		
 		YemaApp app = builder.build();
+		
 		app.run();
 	}
 

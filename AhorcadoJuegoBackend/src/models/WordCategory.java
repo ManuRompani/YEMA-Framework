@@ -13,6 +13,11 @@ public class WordCategory {
 	public String getDescription() {
 		return description;
 	}
+	public WordCategory(int id, String description) {
+		super();
+		this.id = id;
+		this.description = description;
+	}
 	public void setDescription(String description) {
 		this.description = description;
 	}

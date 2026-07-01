@@ -2,6 +2,7 @@ package mainsJuego;
 
 import java.io.IOException;
 
+import containers.MemoryUserManager;
 import containers.ScoreContainer;
 import containers.WordContainer;
 import controllers.ScoreController;
@@ -21,9 +22,11 @@ public class Main {
 		builder.addController("words", new WordsController());
 		builder.addController("score", new ScoreController());
 		
-		builder.addService(new WordContainer());
-		builder.addService(new ScoreContainer());
+		MemoryUserManager userManager = new MemoryUserManager();
 		
+		builder.addService(userManager);;
+		builder.addService(new WordContainer());
+		builder.addService(new ScoreContainer(userManager));
 		YemaApp app = builder.build();
 		
 		app.run();

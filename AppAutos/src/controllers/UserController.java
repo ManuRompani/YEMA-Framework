@@ -1,11 +1,11 @@
 package controllers;
 
 import appautos_utils.UserSerializer;
-import containers.MemoryUserManager;
 import dtos.Command;
 import dtos.Response;
 import exceptions.ServiceNotImplementedException;
 import framework_controllers.BaseController;
+import mainsJuego.MemoryUserManager;
 import model.UserBase;
 import services.ServiceLocator;
 import utils.Context;

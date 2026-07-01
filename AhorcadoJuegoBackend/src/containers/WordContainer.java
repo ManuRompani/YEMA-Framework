@@ -1,6 +1,7 @@
 package containers;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import models.Word;
@@ -11,11 +12,13 @@ import models.Word;
 
 public class WordContainer {
 	private ArrayList<Word> wordsList;
+	private ArrayList<String> categoryList;
 	private Random random;
 	
 	public WordContainer() {
 		this.wordsList = new ArrayList<Word>();
 		this.random = new Random();
+		this.categoryList = new ArrayList<String>();
 		loadDefaultWords();
 	}
 	
@@ -50,7 +53,7 @@ public class WordContainer {
 		return wordsList.get(index);
 	}
 	
-	//
+	
 	public Word getWordByName(String name) {
         Optional<Word> word = wordsList.stream()
                 .filter(w -> w.getName().equalsIgnoreCase(name))
@@ -69,16 +72,16 @@ public class WordContainer {
 	}
 	
 	public ArrayList<String> getCategories() {
-        ArrayList<String> categories = new ArrayList<>();
-        for (Word word : wordsList) {
-            if (!categories.contains(word.getCategory())) {
-                categories.add(word.getCategory());
-            }
-        }
-        return categories;
-    }
+	    ArrayList<String> categories = new ArrayList<>(categoryList);
+	    for (Word word : wordsList) {
+	        if (!categories.contains(word.getCategory())) {
+	            categories.add(word.getCategory());
+	        }
+	    }
+	    return categories;
+	}
 	
-	//@admin
+	//@admin //dejamos el throw o un trycatch?
 	public void addWord(Word newWord) throws ValidatorException{
 		StringValidator.from(newWord.getName())
 			.notBlankValidate()

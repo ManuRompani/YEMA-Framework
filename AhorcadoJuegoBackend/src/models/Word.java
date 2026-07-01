@@ -5,7 +5,7 @@ public class Word {
 	private String category;
 	private String hint;
 	
-	public Word(String name, String Category, String hint) {
+	public Word(String name, String category, String hint) {
 		super();
 		this.name = name;
 		this.category = category;

@@ -28,6 +28,7 @@ public class Main {
 		builder.addService(new WordContainer());
 		builder.addService(new ScoreContainer(userManager));
 		YemaApp app = builder.build();
+		
 		app.run();
 	}
 

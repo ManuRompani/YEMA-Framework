@@ -31,7 +31,7 @@ public class CarDeserializer implements Deserializer {
 					atributes[i].set(newObject, value);
 				}else {
 					
-				atributes[i].set(newObject, values[i]);
+					atributes[i].set(newObject, values[i]);
 				}
 
 			}

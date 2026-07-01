@@ -1,0 +1,219 @@
+@page "/jugar"
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+
+<div class="game-layout">
+    <div class="game-top-bar">
+        <button class="exit-btn" @onclick="ShowExitModal">&#x2715; Salir</button>
+
+        <div class="game-stats">
+            <div class="game-stat">
+                <div class="game-stat-label">RONDA</div>
+                <div class="game-stat-value round">@Round</div>
+            </div>
+            <div class="game-stat">
+                <div class="game-stat-label">PUNTOS</div>
+                <div class="game-stat-value points">@Points</div>
+            </div>
+            <div class="game-stat">
+                <div class="game-stat-label">VIDAS</div>
+                <div class="game-stat-value lives">@GetHearts()</div>
+            </div>
+        </div>
+
+        <div class="game-user">@Username</div>
+    </div>
+
+    <div class="game-content">
+        <div class="game-sidebar">
+            <div class="hangman-card">
+                <HangmanDrawing Errors="Errors" />
+                <p class="error-count">@Errors / 3 errores</p>
+            </div>
+
+            <div class="info-card">
+                <div class="info-label">CATEGORÍA</div>
+                <div class="category-badge">@Category</div>
+
+                <div class="info-label">PISTA</div>
+                <p class="hint-text">"@Hint"</p>
+
+                <div class="info-label">VALE</div>
+                <div class="points-display">
+                    <span class="points-number">@BasePoints</span>
+                    <span class="points-unit"> pts</span>
+                    <span class="bonus-badge">+@BonusPoints bonus</span>
+                </div>
+                <p class="points-note">@PointsNote</p>
+            </div>
+        </div>
+
+        <div class="game-main">
+            <div class="word-display">
+                @foreach (var row in WordRows)
+                {
+                    <div class="word-row">
+                        @foreach (var letter in row)
+                        {
+                            @if (letter == ' ')
+                            {
+                                <div class="letter-slot space"></div>
+                            }
+                            else if (GuessedLetters.Contains(char.ToUpper(letter)))
+                            {
+                                <div class="letter-slot revealed">@char.ToUpper(letter)</div>
+                            }
+                            else
+                            {
+                                <div class="letter-slot">&nbsp;</div>
+                            }
+                        }
+                    </div>
+                }
+            </div>
+
+            <p class="word-length">@CurrentWord.Length letras</p>
+
+            <div class="keyboard">
+                @foreach (var row in KeyboardRows)
+                {
+                    <div class="keyboard-row">
+                        @foreach (var letter in row)
+                        {
+                            <button class="key-btn @GetKeyClass(letter)"
+                                    @onclick="() => GuessLetter(letter)"
+                                    disabled="@(GuessedLetters.Contains(letter) || GameOver)">
+                                @letter
+                            </button>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ShowDefeatModal)
+{
+    <div class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-icon">&#x1F480;</div>
+            <h2 class="modal-title defeat">¡Perdiste!</h2>
+            <p class="modal-message">La palabra era <span class="modal-word">@CurrentWord.ToUpper()</span></p>
+            <p class="modal-message">No llegaste a acumular puntos esta vez</p>
+            <div class="modal-buttons">
+                <button class="btn-modal accent" @onclick="GoToPositions">Ver tabla de posiciones</button>
+                <button class="btn-modal primary" @onclick="GoToMenu">Volver al menú</button>
+            </div>
+        </div>
+    </div>
+}
+
+@if (ShowExitModalFlag)
+{
+    <div class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-icon">&#x26A0;&#xFE0F;</div>
+            <h2 class="modal-title warning">¿Seguro que te vas?</h2>
+            <p class="modal-message">Si salís ahora perdés los <span class="highlight">@Points puntos</span> acumulados. ¡No quedan guardados!</p>
+            <div class="modal-buttons" style="flex-direction: row;">
+                <button class="btn-modal primary" style="flex:1;" @onclick="() => ShowExitModalFlag = false">Seguir jugando</button>
+                <button class="btn-modal danger" style="flex:1;" @onclick="GoToMenu">Salir igual</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private string Username = "admin";
+    private int Round = 1;
+    private int Points = 0;
+    private int Lives = 3;
+    private int Errors = 0;
+    private string Category = "Gastronomía";
+    private string Hint = "El manjar más amado, infaltable en las facturas";
+    private int BasePoints = 30;
+    private int BonusPoints = 15;
+    private string PointsNote = "Palabras largas (8+ letras)";
+    private string CurrentWord = "DULCEDELECHE";
+    private HashSet<char> GuessedLetters = new();
+    private bool ShowDefeatModal = false;
+    private bool ShowExitModalFlag = false;
+    private bool GameOver = false;
+
+    private List<string> KeyboardRows = new()
+    {
+        "ABCDEFGHIJ",
+        "KLMNÑOPQRS",
+        "TUVWXYZ"
+    };
+
+    private List<List<char>> WordRows => CurrentWord
+        .ToUpper()
+        .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+        .Select(w => w.ToList())
+        .ToList();
+
+    private string GetHearts()
+    {
+        return string.Concat(Enumerable.Repeat("\u2764\uFE0F ", Lives)).Trim();
+    }
+
+    private string GetKeyClass(char letter)
+    {
+        if (!GuessedLetters.Contains(letter)) return "";
+        return CurrentWord.ToUpper().Contains(letter) ? "correct" : "wrong";
+    }
+
+    private void GuessLetter(char letter)
+    {
+        if (GuessedLetters.Contains(letter) || GameOver) return;
+
+        GuessedLetters.Add(letter);
+
+        if (!CurrentWord.ToUpper().Contains(letter))
+        {
+            Errors++;
+            if (Errors >= 3)
+            {
+                Lives--;
+                if (Lives <= 0)
+                {
+                    GameOver = true;
+                    ShowDefeatModal = true;
+                }
+                else
+                {
+                    Errors = 0;
+                    GuessedLetters.Clear();
+                }
+            }
+        }
+        else
+        {
+            var uniqueLetters = CurrentWord.ToUpper().Where(c => c != ' ').Distinct().ToList();
+            if (uniqueLetters.All(l => GuessedLetters.Contains(l)))
+            {
+                Points += BasePoints;
+                Round++;
+                GuessedLetters.Clear();
+                Errors = 0;
+            }
+        }
+    }
+
+    private void ShowExitModal()
+    {
+        ShowExitModalFlag = true;
+    }
+
+    private void GoToMenu()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+    private void GoToPositions()
+    {
+        Navigation.NavigateTo("/posiciones");
+    }
+}

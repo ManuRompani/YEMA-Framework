@@ -1,8 +1,11 @@
 package containers;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Stream;
+
 import models.Word;
 import validators.StringValidator;
 import exceptions.ValidatorException;
@@ -11,12 +14,15 @@ import models.Word;
 
 public class WordContainer {
 	private ArrayList<Word> wordsList;
+	private List<String> categoryList;
 	private Random random;
 	
 	public WordContainer() {
 		this.wordsList = new ArrayList<Word>();
 		this.random = new Random();
+		this.categoryList = new ArrayList<String>();
 		loadDefaultWords();
+		loadDefaultCategories();
 	}
 	
 	private void loadDefaultWords() {
@@ -42,6 +48,18 @@ public class WordContainer {
         wordsList.add(new Word("YERBA", "Cultura", "Planta base de la bebida nacional"));
     }
 	
+	private void loadDefaultCategories() {
+		categoryList.addAll(List.of(
+			"Cultura",
+			"Gastronomía",
+			"Deporte",
+			"Lunfardo",
+			"Música",
+			"Historia",
+			"Geografía"
+		));
+	}
+	
 	public Word getRandomWord() {
 		if (wordsList.isEmpty()) {
 			//throw exception no hay palabras para poder jugar comuniquese con el admin?
@@ -50,7 +68,7 @@ public class WordContainer {
 		return wordsList.get(index);
 	}
 	
-	//
+	
 	public Word getWordByName(String name) {
         Optional<Word> word = wordsList.stream()
                 .filter(w -> w.getName().equalsIgnoreCase(name))
@@ -68,17 +86,11 @@ public class WordContainer {
 		return filtered;
 	}
 	
-	public ArrayList<String> getCategories() {
-        ArrayList<String> categories = new ArrayList<>();
-        for (Word word : wordsList) {
-            if (!categories.contains(word.getCategory())) {
-                categories.add(word.getCategory());
-            }
-        }
-        return categories;
-    }
+	public List<String> getCategories() {
+		return this.categoryList.stream().toList();
+	}
 	
-	//@admin
+	//@admin //dejamos el throw o un trycatch?
 	public void addWord(Word newWord) throws ValidatorException{
 		StringValidator.from(newWord.getName())
 			.notBlankValidate()

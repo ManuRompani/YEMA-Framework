@@ -76,7 +76,7 @@ public class WordContainer {
         return word.orElse(null);
     }
 	
-	public ArrayList<Word> getWordByCategory(String category){
+	public ArrayList<Word> getWordsByCategory(String category){
 		ArrayList<Word> filtered = new ArrayList<>();
 		for(Word word: wordsList) {
 			if(word.getCategory().equalsIgnoreCase(category)) {

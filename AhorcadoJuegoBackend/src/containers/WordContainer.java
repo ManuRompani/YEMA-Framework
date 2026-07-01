@@ -1,10 +1,8 @@
 package containers;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.stream.Stream;
 
 import models.Word;
 import validators.StringValidator;
@@ -14,17 +12,16 @@ import models.Word;
 
 public class WordContainer {
 	private ArrayList<Word> wordsList;
-	private List<String> categoryList;
 	private Random random;
 	
 	public WordContainer() {
 		this.wordsList = new ArrayList<Word>();
 		this.random = new Random();
-		this.categoryList = new ArrayList<String>();
-		loadDefaultWords();
-		loadDefaultCategories();
+		//loadDefaultWords();
 	}
 	
+	// esto lo voy a poner en otro lado, main seguro
+	/*
 	private void loadDefaultWords() {
         wordsList.add(new Word("MATE", "Cultura", "Bebida típica que se toma con bombilla"));
         wordsList.add(new Word("EMPANADA", "Gastronomía", "Masa rellena horneada o frita"));
@@ -47,18 +44,7 @@ public class WordContainer {
         wordsList.add(new Word("PELOTA", "Deporte", "Objeto esférico usado en deportes"));
         wordsList.add(new Word("YERBA", "Cultura", "Planta base de la bebida nacional"));
     }
-	
-	private void loadDefaultCategories() {
-		categoryList.addAll(List.of(
-			"Cultura",
-			"Gastronomía",
-			"Deporte",
-			"Lunfardo",
-			"Música",
-			"Historia",
-			"Geografía"
-		));
-	}
+	*/
 	
 	public Word getRandomWord() {
 		if (wordsList.isEmpty()) {
@@ -76,18 +62,15 @@ public class WordContainer {
         return word.orElse(null);
     }
 	
-	public ArrayList<Word> getWordByCategory(String category){
+	public ArrayList<Word> getWordsByCategory(int categoryId){
 		ArrayList<Word> filtered = new ArrayList<>();
+		
 		for(Word word: wordsList) {
-			if(word.getCategory().equalsIgnoreCase(category)) {
+			if(word.getCategory().getId() == categoryId) {
 				filtered.add(word);
 			}
 		}
 		return filtered;
-	}
-	
-	public List<String> getCategories() {
-		return this.categoryList.stream().toList();
 	}
 	
 	//@admin //dejamos el throw o un trycatch?
@@ -96,9 +79,6 @@ public class WordContainer {
 			.notBlankValidate()
 			.minLengthValidate(2)
 			.maxLengthValidate(30);
-		
-		StringValidator.from(newWord.getCategory())
-        	.notBlankValidate();
     
 		StringValidator.from(newWord.getHint())
 	        .notBlankValidate()

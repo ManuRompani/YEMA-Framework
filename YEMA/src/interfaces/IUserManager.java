@@ -11,5 +11,5 @@ public interface IUserManager {
 	UserBase getUser(String username);
 	public void registerUser(UserBase user);	
 	public boolean userExists(String user);
-
+	
 }

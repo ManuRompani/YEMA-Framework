@@ -61,7 +61,7 @@ public class ScoreController extends BaseController {
                 
                 String dataRankingSerialized =  ss.serialize(ranking);
                 
-                if(dataRankingSerialized == null) {
+                if(dataRankingSerialized == null || dataRankingSerialized.isEmpty()) {
                 	response.setMessage("No hay puntajes registrados aun");
                 }else {
                 	response.setMessage(dataRankingSerialized);

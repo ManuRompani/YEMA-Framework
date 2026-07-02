@@ -1,6 +1,7 @@
 @page "/posiciones"
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
+@inject ScoreNegocio ScoreNegocio
 
 <div class="positions-page">
     <a class="back-link" href="/">&#x2190; Volver al menú</a>
@@ -11,6 +12,7 @@
         <p class="positions-subtitle">Los cracks del ahorcado argentino</p>
     </div>
 
+    @if(Players.Any()){
     <table class="positions-table">
         <thead>
             <tr>
@@ -48,30 +50,28 @@
                 </tr>
             }
         </tbody>
-    </table>
+        </table>
+    }
+    else
+    {
+        <p>No hay posiciones registradas aun.</p>
+    }
 
     <button class="btn-play-now" @onclick="GoToPlay">&#x26A1; Jugar ahora</button>
 </div>
 
 @code {
-    private List<PlayerEntry> Players = new()
-    {
-        new() { Name = "marito", Rounds = 8, Points = 210 },
-        new() { Name = "carlitos", Rounds = 6, Points = 150 },
-        new() { Name = "lauchita99", Rounds = 4, Points = 110 },
-        new() { Name = "juancho_bsas", Rounds = 3, Points = 80 },
-        new() { Name = "sole_baires", Rounds = 2, Points = 50 }
-    };
+    private List<Player> Players = new() { };
 
     private void GoToPlay()
     {
         Navigation.NavigateTo("/login");
     }
 
-    public class PlayerEntry
-    {
-        public string Name { get; set; } = "";
-        public int Rounds { get; set; }
-        public int Points { get; set; }
-    }
+protected override async Task OnInitializedAsync()
+{
+    Players = await ScoreNegocio.GetPositions();
+}
+
+
 }

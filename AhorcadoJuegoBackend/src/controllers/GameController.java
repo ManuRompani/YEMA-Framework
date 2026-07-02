@@ -8,14 +8,13 @@ import dtos.Command;
 import dtos.Response;
 import exceptions.ServiceNotImplementedException;
 import framework_controllers.BaseController;
+import juegoUtils.WordCategorySerializer;
 import models.Word;
 import services.ServiceLocator;
 import utils.Context;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import ahorcadojuego_utils.WordCategorySerializer;
 
 @AuthorizedRoles(roles = {"admin","player"})
 public class GameController extends BaseController {

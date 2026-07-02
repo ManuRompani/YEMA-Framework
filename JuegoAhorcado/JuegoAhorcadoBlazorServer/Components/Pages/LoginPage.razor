@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 @using JuegoAhorcadoBlazorServer.Modelo
 @using JuegoAhorcadoBlazorServer.Negocio
+@using Microsoft.AspNetCore.Components.Web
 @inject NavigationManager Navigation
 @inject PlayerNegocio PlayerNegocio
 
@@ -81,6 +82,15 @@
 
     private LoginModel model = new();
 
+    private string returnUrl = "/jugar";
+
+    protected override void OnInitialized()
+    {
+        var uri = Navigation.ToAbsoluteUri(Navigation.Uri);
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+        returnUrl = query["returnUrl"] ?? "/jugar";
+    }
+
     private void ShowLogin()
     {
         isLogin = true;
@@ -130,7 +140,7 @@
 
                     await Task.Delay(500);
 
-                    Navigation.NavigateTo("/jugar");
+                    Navigation.NavigateTo(returnUrl);
                 }
 
             }
@@ -141,7 +151,7 @@
                     Id = 0,
                     Name = model.Username,
                     Pass = model.Password,
-                    Role = "PLAYER",
+                    Role = "player",
                     Rounds = 0,
                     Points = 0
                 };
@@ -152,7 +162,7 @@
 
                 await Task.Delay(500);
 
-                Navigation.NavigateTo("/jugar");
+                Navigation.NavigateTo(returnUrl);
             }
         }
         catch (Exception ex)

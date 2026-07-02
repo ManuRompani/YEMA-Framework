@@ -3,6 +3,7 @@ package controllers;
 import java.util.List;
 
 import ahorcadojuego_utils.ScoreSerializer;
+import annotations.AuthorizedRoles;
 import containers.ScoreContainer;
 import dtos.Command;
 import dtos.Response;
@@ -11,6 +12,7 @@ import framework_controllers.BaseController;
 import utils.Context;
 import models.Player;
 import services.ServiceLocator;
+
 
 public class ScoreController extends BaseController {
 	private ScoreContainer scoreContainer;

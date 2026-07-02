@@ -1,5 +1,6 @@
 package controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ahorcadojuego_utils.WordCategorySerializer;
@@ -13,6 +14,7 @@ import exceptions.ServiceNotImplementedException;
 import exceptions.ValidatorException;
 import framework_controllers.BaseController;
 import juegoUtils.WordDeserializer;
+import juegoUtils.WordListSerializer;
 import models.Word;
 import utils.Context;
 import services.ServiceLocator;
@@ -24,6 +26,7 @@ public class AdminController extends BaseController {
 	private WordContainer words;
 	private WordDeserializer wordDeserializer;
 	private WordCategorySerializer categorySerializer;
+	private WordListSerializer wordListSerializer;
 
 	@Override
 	public Response Ejecutar(Command command, Context context) {
@@ -57,6 +60,7 @@ public class AdminController extends BaseController {
 			this.words = sl.getService(WordContainer.class);
 			this.wordDeserializer = sl.getService(WordDeserializer.class);
 			this.categorySerializer = sl.getService(WordCategorySerializer.class);
+			this.wordListSerializer = sl.getService(WordListSerializer.class);
 		} catch (ServiceNotImplementedException se) {
 			throw new RuntimeException("Error crítico: inicializacion del servicio " + se.getMessage() + " fallida.");
 		}
@@ -121,11 +125,11 @@ public class AdminController extends BaseController {
 	private Response getWords(Command command, Context cont) {
 		Response response = new Response();
 
-		// TODO: implementar listado de palabras.
-		// Formato esperado por el front:
-		// PALABRA|CATEGORIA|PISTA|PUNTAJE;PALABRA|CATEGORIA|PISTA|PUNTAJE
-
-		response.setMessage("bad=Metodo get-words aun no implementado");
+		ArrayList<Word> palabras = this.words.getAllWords();
+		String sPalabras = this.wordListSerializer.serialize(palabras);
+		
+		response.setMessage(sPalabras);
+		
 		return response;
 	}
 

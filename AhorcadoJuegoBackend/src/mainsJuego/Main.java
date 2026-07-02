@@ -14,6 +14,7 @@ import controllers.ScoreController;
 import juegoUtils.PlayerDeserializer;
 import juegoUtils.PlayerSerializer;
 import juegoUtils.WordDeserializer;
+import juegoUtils.WordListSerializer;
 import controllers.GameController;
 import services.YemaApp;
 import services.YemaAppBuilder;
@@ -43,6 +44,7 @@ public class Main {
 		builder.addService(new PlayerSerializer());
 		builder.addService(new WordDeserializer());
 		builder.addService(new WordCategorySerializer());
+		builder.addService(new WordListSerializer());
 		
 		builder.addService(gameContainer);
 		YemaApp app = builder.build();

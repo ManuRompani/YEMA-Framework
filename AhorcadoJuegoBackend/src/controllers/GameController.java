@@ -14,6 +14,9 @@ import services.ServiceLocator;
 import utils.Context;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import ahorcadojuego_utils.WordCategorySerializer;
 
 @AuthorizedRoles(roles = {"admin","player"})
 public class GameController extends BaseController {
@@ -111,12 +114,9 @@ public class GameController extends BaseController {
 	}
 
 	private String listCategories() {
-		ArrayList<WordCategory> cats = (ArrayList<WordCategory>) categoryContainer.getAll();
-		StringBuilder sb = new StringBuilder("CATEGORÍAS:\n");
-		for (WordCategory c : cats) {
-			sb.append("[").append(c.getId()).append("] ").append(c.getDescription()).append("\n");
-		}
-		return sb.toString();
+		WordCategorySerializer serializer = new WordCategorySerializer();
+		List<WordCategory> cats = this.categoryContainer.getAll();
+		return serializer.serialize(cats);
 	}
 
 	@Override

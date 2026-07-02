@@ -18,7 +18,7 @@ namespace JuegoAhorcadoBlazorServer.Negocio
             _credentialsSerializer = new CredentialsSerializer();
         }
 
-        public async Task<Player> Register(Player newPlayer)
+        public async Task<Player?> Register(Player newPlayer)
         {
             try
             {
@@ -30,7 +30,7 @@ namespace JuegoAhorcadoBlazorServer.Negocio
 
                 string respuestaDecodificada = Uri.UnescapeDataString(respuesta);
 
-                Player playerRegistrado = _playerDeserializer.Deserialize(respuestaDecodificada);
+                Player? playerRegistrado = _playerDeserializer.Deserialize(respuestaDecodificada);
 
                 return playerRegistrado;
             }
@@ -62,5 +62,8 @@ namespace JuegoAhorcadoBlazorServer.Negocio
                 throw new Exception("Error al iniciar sesión.", ex);
             }
         }
+
+
+        //Funcionalidades de admin, deberia ir en otra clase pero no da el tiempo
     }
 }

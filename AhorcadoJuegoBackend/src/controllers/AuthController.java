@@ -48,22 +48,28 @@ public class AuthController extends BaseController{
 	    // Lo guarda en el contexto, es decir, queda logueado en la sesión.
 	    context.setUser(player);
 
-	    // Devuelve el jugador serializado al cliente.
-	    response.setMessage(this.serializer.serialize(player));
+	    if(player == null) {
+	    	response.setMessage("null");
+	    }
+	    else {
+	    	// Devuelve el jugador serializado al cliente.
+		    response.setMessage(this.serializer.serialize(player));
+	    }
+	    
 	    return response;
 	}
 	
 	@Override
 	public Response Ejecutar(Command command, Context context) {
 		switch(command.getAction()) {
-		case "register":
-			return this.register(command, context);
-		case "login":
-			return this.login(command, context);
-		default:
-			Response response = new Response();
-			response.setMessage("Accion no reconocida: " + command.getAction());
-			return response;
+			case "register":
+				return this.register(command, context);
+			case "login":
+				return this.login(command, context);
+			default:
+				Response response = new Response();
+				response.setMessage("Accion no reconocida: " + command.getAction());
+				return response;
 		}
 	}
 

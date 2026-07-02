@@ -60,11 +60,11 @@ public class WordContainer {
         return word.orElse(null);
     }
 	
-	public ArrayList<Word> getWordsByCategory(int categoryId){
+	public ArrayList<Word> getWordsByCategory(String categoryId){
 		ArrayList<Word> filtered = new ArrayList<>();
 		
 		for(Word word: wordsList) {
-			if(word.getCategory().getId() == categoryId) {
+			if(word.getCategory().equals(categoryId)) {
 				filtered.add(word);
 			}
 		}

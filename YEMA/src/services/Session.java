@@ -35,66 +35,6 @@ public class Session implements Runnable {
 
 		Response response = new Response();
 
-		
-		/*while (true) {
-			String username="";
-			String password="";
-			String resp="";
-			UserBase user;
-			Credentials creds;
-			
-			//creo que para un futuro un switch viene mejor que tantos if, yami :)
-			try {
-				communicator.send("Bienvenido, estas registrado? Para finalizar escribi salir");
-				resp = communicator.receive();		
-				
-				if(resp == null || resp.equalsIgnoreCase("salir") ) {
-					System.out.println("Cliente desconectado");
-					return;
-				}
-				
-				if(!resp.equalsIgnoreCase("si") && !resp.equalsIgnoreCase("no") && !resp.equalsIgnoreCase("salir")){communicator.send("Debes responder si/no/salir");
-					continue;
-				}				
-				
-				// ======REGISTRO NUEVO USUARIO===========
-				if (resp.equalsIgnoreCase("no")) {
-					communicator.send("Elegi un username y escribilo:");
-					username = communicator.receive();
-					communicator.send("Ahora escribi una contrasenia:");
-					password = communicator.receive();
-					user = new UserBase(1, username, password, null);
-					serviceLocator.getService(IUserManager.class).registerUser(user);
-					communicator.send("Tu usuario "+ user.getName()+" fue creado con exito.");
-				}		
-												
-				
-				// ======INGRESO DE CREDENCIALES===========
-				communicator.send("Ingrese su usuario: ");
-				username = communicator.receive();
-				communicator.send("Ingrese su contraseña:");
-				password = communicator.receive();
-				creds = new Credentials(username, password);
-				
-				// ======AUTENTICACION===========
-				user = serviceLocator.getService(IUserManager.class).authenticate(creds);									
-					if (user != null) {
-						this.sessionData = new SessionData(user);
-						communicator.send("Hola " + this.sessionData.getUserName());						
-						break;
-					} else {
-						response.setMessage("Credenciales invalidas");						
-						}
-			} catch (ServiceNotImplementedException e) {
-				response.setMessage("El servicio " + e.getMessage() + " no se encuentra.");
-			}catch(Exception e) {
-				System.out.println("Cliente desconectado");
-				return;
-			}
-			
-			communicator.send(response.getMessage());
-		}*/
-
 		Context context = new Context(this.sessionData, this.serviceLocator);
 		
 		// =======INGRESO DE COMANDOS===========
@@ -120,8 +60,7 @@ public class Session implements Runnable {
 				}
 
 				Command command = parser.Parse(sMessage);
-				System.out.println(command.getParameter("player"));
-				System.out.println(command.getResource());
+				
 				BaseController controller = this.controllerLocator.getController(command.getResource());
 				// Se valida que el usuario este autorizado a usar el controlador
 				//

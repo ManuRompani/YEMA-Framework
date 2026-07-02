@@ -8,7 +8,7 @@ public class PlayerDeserializer implements Deserializer {
 	@Override
     public <T> T deserealize(String t, Class<T> c) {
         try {
-            String[] values = t.split("\\%");
+            String[] values = t.split("\\|");
 
             int id = Integer.parseInt(values[0]);
             String name = values[1];

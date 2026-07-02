@@ -9,10 +9,10 @@ public class UserBase {
 	private int id;
 	private String name;
 	private String pass;		
-	private RoleBase role;
+	private String role;
 	
 	
-	public UserBase(int id, String name, String pass, RoleBase role) {
+	public UserBase(int id, String name, String pass, String role) {
 		super();
 		this.pass = pass;
 		this.id = id;
@@ -36,11 +36,11 @@ public class UserBase {
 		this.id = id;
 	}
 
-	public RoleBase getRole() {
+	public String getRole() {
 		return role;
 	}
 
-	public void setRole(RoleBase role) {
+	public void setRole(String role) {
 		this.role = role;
 	}
 

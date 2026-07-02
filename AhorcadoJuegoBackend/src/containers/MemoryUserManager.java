@@ -8,7 +8,9 @@ import models.Player;
 
 
 public class MemoryUserManager implements IUserManager {
-	private List<Player> listUsers = new ArrayList<Player>();
+	// se utiliza para asignar id al usuario sin repetir
+	private int nextUserId = 1;
+	private List<UserBase> listUsers = new ArrayList<UserBase>();
 
 	@Override
 	public UserBase getUser(String username) {
@@ -35,9 +37,9 @@ public class MemoryUserManager implements IUserManager {
 	}
 	
 	@Override
-	public void registerUser(UserBase user) {
+	public UserBase registerUser(UserBase user) {
 		Player player = new Player(
-				user.getId(), 
+				this.nextUserId, 
 				user.getName(),
 				user.getPass(),
 				user.getRole(),
@@ -45,6 +47,19 @@ public class MemoryUserManager implements IUserManager {
 				0
 				);
 		this.listUsers.add(player);
+		this.nextUserId ++;
+		
+		return player;
+	}
+	
+	public UserBase registerAdmin(UserBase user) {
+		user.setId(nextUserId);
+		
+		this.listUsers.add(user);
+		
+		this.nextUserId ++;
+		
+		return user;
 	}
 
 	@Override

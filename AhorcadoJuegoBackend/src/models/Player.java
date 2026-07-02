@@ -1,13 +1,12 @@
 package models;
 
-import model.RoleBase;
 import model.UserBase;
 
 public class Player extends UserBase{
 	private int rounds;
 	private int points;
 	
-	public Player(int id, String name, String pass, RoleBase role, int rounds, int points) {
+	public Player(int id, String name, String pass, String role, int rounds, int points) {
 		super(id, name, pass, role);
 		this.rounds = rounds;
 		this.points = points;

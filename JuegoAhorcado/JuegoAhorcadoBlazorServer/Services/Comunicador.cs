@@ -16,20 +16,45 @@ namespace JuegoAhorcadoBlazorServer.Services
 
             using NetworkStream stream = cliente.GetStream();
 
-            using StreamReader reader = new StreamReader(stream, Encoding.UTF8);
-            using StreamWriter writer = new StreamWriter(stream, Encoding.UTF8)
-            {
-                AutoFlush = true
-            };
+            Encoding utf8SinBom = new UTF8Encoding(false);
 
-            await writer.WriteLineAsync(mensaje);
+            mensaje = mensaje.Replace("\uFEFF", "").Trim();
 
-            string? respuesta = await reader.ReadLineAsync();
+            byte[] datosEnviar = utf8SinBom.GetBytes(mensaje + "\n");
 
-            if (respuesta == null)
+            await stream.WriteAsync(datosEnviar, 0, datosEnviar.Length);
+            await stream.FlushAsync();
+
+            string respuesta = await LeerRespuestaAsync(stream);
+
+            if (string.IsNullOrWhiteSpace(respuesta))
                 throw new IOException("El servidor cerró la conexión sin responder.");
 
-            return respuesta;
+            return respuesta.Replace("\uFEFF", "").Trim();
+        }
+
+        private async Task<string> LeerRespuestaAsync(NetworkStream stream)
+        {
+            byte[] buffer = new byte[1024];
+            using MemoryStream memoria = new MemoryStream();
+
+            using CancellationTokenSource timeout = new CancellationTokenSource(
+                TimeSpan.FromSeconds(10)
+            );
+
+            int bytesLeidos = await stream.ReadAsync(
+                buffer,
+                0,
+                buffer.Length,
+                timeout.Token
+            );
+
+            if (bytesLeidos == 0)
+                return "";
+
+            memoria.Write(buffer, 0, bytesLeidos);
+
+            return Encoding.UTF8.GetString(memoria.ToArray());
         }
     }
 }

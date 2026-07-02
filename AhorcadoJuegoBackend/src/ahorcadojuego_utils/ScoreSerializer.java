@@ -5,11 +5,11 @@ import java.util.List;
 import models.Player;
 import services.Serializer;
 
-public class ScoreSerializer implements Serializer<List<Player>>{
+public class ScoreSerializer implements Serializer{
 
 	@Override
-	public String serialize(List<Player> players) {		
-		
+	public String serialize(Object objPlayers) {		
+			List<Player> players = (List<Player>)objPlayers;
 			if (players == null || players.isEmpty()) {
 				return "";
 			}

@@ -8,8 +8,6 @@ import models.Word;
 import validators.StringValidator;
 import exceptions.ValidatorException;
 
-import models.Word;
-
 public class WordContainer {
 	private ArrayList<Word> wordsList;
 	private Random random;
@@ -87,6 +85,10 @@ public class WordContainer {
 		wordsList.add(newWord);
 	}
 	
+	public ArrayList<Word> getAllWords() {
+		return new ArrayList<>(wordsList);
+	}
+
 	//@admin
 	public boolean removeWord(String name){
 		Word word = getWordByName(name);

@@ -2,6 +2,7 @@ package controllers;
 
 import java.util.List;
 
+import ahorcadojuego_utils.ScoreSerializer;
 import containers.ScoreContainer;
 import dtos.Command;
 import dtos.Response;
@@ -13,6 +14,7 @@ import services.ServiceLocator;
 
 public class ScoreController extends BaseController {
 	private ScoreContainer scoreContainer;
+	private ScoreSerializer ss = new ScoreSerializer();
 	
 	@Override
 	public void iniciarServicios(ServiceLocator sl) {
@@ -52,25 +54,17 @@ public class ScoreController extends BaseController {
                 }
                 break;
 
-            case "positions":
-                StringBuilder sb = new StringBuilder("TOP 5 MEJORES PUNTAJES:\n");
+            case "positions":            	
                 List<Player> ranking = scoreContainer.getBestFive();
-                if (ranking.isEmpty()) {
-                    sb.append("No hay puntajes registrados aun.");
-                } else {
-                    int pos = 1;
-                    for (Player p : ranking) {
-                        sb.append(pos++)
-                          .append(". ")
-                          .append(p.getName())
-                          .append(" - ")
-                          .append(p.getPoints())
-                          .append(" pts (")
-                          .append(p.getRounds())
-                          .append(" rondas)\n");
-                    }
+                
+                String dataRankingSerialized =  ss.serialize(ranking);
+                
+                if(dataRankingSerialized == null) {
+                	response.setMessage("No hay puntajes registrados aun");
+                }else {
+                	response.setMessage(dataRankingSerialized);
                 }
-                response.setMessage(sb.toString());
+                
                 break;
 
             case "myposition":

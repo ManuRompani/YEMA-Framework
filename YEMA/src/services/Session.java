@@ -67,7 +67,8 @@ public class Session implements Runnable {
 				// Lo valido en la sesion para que cada usuario se autogestione y no que 
 				// el controlador que todos comparten deba decir si esta o no autorizado
 				if(!this.isUserAuthorizedToUse(controller)) {
-					response.setMessage("Unauthorized access.");
+					response.setMessage("unauthorized");
+					System.out.println("acceso no autorizado");
 				}
 				else {
 					response = controller.Ejecutar(command, context);
@@ -97,11 +98,11 @@ public class Session implements Runnable {
 	        return true;
 	    }
 	    
-	    String userRole = this.sessionData.getUser().getRole();
-	    
-	    if(userRole == null) {
+	    if(this.sessionData == null || this.sessionData.getUser() == null || this.sessionData.getUser().getRole() == null) {
 	    	return false;
 	    }
+	    
+	    String userRole = this.sessionData.getUser().getRole();
 	    
 	    AuthorizedRoles annotation = obj.getClass().getAnnotation(AuthorizedRoles.class);
 

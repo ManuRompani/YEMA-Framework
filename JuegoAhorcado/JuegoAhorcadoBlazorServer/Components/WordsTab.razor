@@ -1,6 +1,4 @@
-@using Cliente.JuegoAhorcado.Models
-@using Cliente.JuegoAhorcado.Services
-
+@inject NavigationManager Navigation
 @inject WordNegocio WordNegocio
 
 <div class="admin-header">
@@ -35,8 +33,7 @@ else
                     <label>PALABRA *</label>
                     <input type="text"
                            placeholder="EJEMPLO"
-                           @bind="formWord"
-                           disabled="@isEditing" />
+                           @bind="formWord" />
                 </div>
 
                 <div class="admin-form-group">
@@ -126,6 +123,8 @@ else
 }
 
 @code {
+    private string oldWordName = "";
+    private bool shouldRedirectToLogin = false;
     private bool isLoading = true;
     private bool showForm = false;
     private bool isEditing = false;
@@ -156,6 +155,12 @@ else
             Categories = await WordNegocio.GetCategoriesAsync();
             Words = await WordNegocio.GetWordsAsync();
         }
+        catch (UnauthorizedAccessException)
+        {
+            // marcar y salir; la navegación se realizará en OnAfterRenderAsync
+            shouldRedirectToLogin = true;
+            return;
+        }
         catch (Exception ex)
         {
             ShowError("Error al cargar datos: " + ex.Message);
@@ -163,6 +168,16 @@ else
         finally
         {
             isLoading = false;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (shouldRedirectToLogin && firstRender)
+        {
+            shouldRedirectToLogin = false;
+            // Asegura que la llamada se ejecute en el hilo de la UI/renderer
+            await InvokeAsync(() => Navigation.NavigateTo("/login", forceLoad: true));
         }
     }
 
@@ -217,6 +232,8 @@ else
     {
         ClearMessage();
 
+        oldWordName = word.Name;
+
         formWord = word.Name;
         formHint = word.Hint;
         formCategory = word.Category;
@@ -231,11 +248,11 @@ else
         if (!ValidateForm())
             return;
 
-        WordEntry word = BuildWordFromForm();
+        WordEntry newWord = BuildWordFromForm();
 
         try
         {
-            BackendResponse response = await WordNegocio.UpdateWordAsync(word);
+            BackendResponse response = await WordNegocio.UpdateWordAsync(oldWordName, newWord);
 
             if (!response.Success)
             {
@@ -332,6 +349,7 @@ else
 
     private void ClearForm()
     {
+        oldWordName = "";
         formWord = "";
         formHint = "";
         formCategory = "";
@@ -358,6 +376,12 @@ else
 
     private void ShowBackendError(BackendResponse response)
     {
+        if (response.IsUnauthorized)
+        {
+            Navigation.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+
         if (response.IsRepeated)
         {
             ShowError("La palabra ya existe.");

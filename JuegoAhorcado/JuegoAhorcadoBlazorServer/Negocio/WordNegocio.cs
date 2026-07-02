@@ -23,6 +23,8 @@ namespace JuegoAhorcadoBlazorServer.Negocio
             string request = "admin/get-words";
             string response = await _comunicador.EnviarYRecibirAsync(request);
 
+            ValidateReadResponse(response);
+
             return _wordListDeserializer.Deserialize(response);
         }
 
@@ -30,6 +32,8 @@ namespace JuegoAhorcadoBlazorServer.Negocio
         {
             string request = "admin/get-categories";
             string response = await _comunicador.EnviarYRecibirAsync(request);
+
+            ValidateReadResponse(response);
 
             return _wordCategoryDeserializer.Deserialize(response);
         }
@@ -44,10 +48,11 @@ namespace JuegoAhorcadoBlazorServer.Negocio
             return _responseDeserializer.Deserialize(response);
         }
 
-        public async Task<BackendResponse> UpdateWordAsync(WordEntry word)
+        public async Task<BackendResponse> UpdateWordAsync(string oldWordName, WordEntry newWord)
         {
-            string serializedWord = _wordSerializer.Serialize(word);
-            string request = $"admin/update-word/word={serializedWord}";
+            string serializedWord = _wordSerializer.Serialize(newWord);
+
+            string request = $"admin/update-word/oldWord={oldWordName}&newWord={serializedWord}";
 
             string response = await _comunicador.EnviarYRecibirAsync(request);
 
@@ -61,6 +66,17 @@ namespace JuegoAhorcadoBlazorServer.Negocio
             string response = await _comunicador.EnviarYRecibirAsync(request);
 
             return _responseDeserializer.Deserialize(response);
+        }
+
+        private void ValidateReadResponse(string response)
+        {
+            BackendResponse backendResponse = _responseDeserializer.Deserialize(response);
+
+            if (backendResponse.IsUnauthorized)
+                throw new UnauthorizedAccessException(backendResponse.Message);
+
+            if (!backendResponse.Success && response.StartsWith("bad=", StringComparison.OrdinalIgnoreCase))
+                throw new InvalidOperationException(backendResponse.Message);
         }
     }
 }

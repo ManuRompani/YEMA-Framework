@@ -1,5 +1,8 @@
 package controllers;
 
+import java.util.List;
+
+import ahorcadojuego_utils.WordCategorySerializer;
 import annotations.AuthorizedRoles;
 import consts.Roles;
 import containers.WordCategoryContainer;
@@ -20,6 +23,7 @@ public class AdminController extends BaseController {
 	private WordCategoryContainer categories;
 	private WordContainer words;
 	private WordDeserializer wordDeserializer;
+	private WordCategorySerializer categorySerializer;
 
 	@Override
 	public Response Ejecutar(Command command, Context context) {
@@ -52,6 +56,7 @@ public class AdminController extends BaseController {
 			this.categories = sl.getService(WordCategoryContainer.class);
 			this.words = sl.getService(WordContainer.class);
 			this.wordDeserializer = sl.getService(WordDeserializer.class);
+			this.categorySerializer = sl.getService(WordCategorySerializer.class);
 		} catch (ServiceNotImplementedException se) {
 			throw new RuntimeException("Error crítico: inicializacion del servicio " + se.getMessage() + " fallida.");
 		}
@@ -81,11 +86,24 @@ public class AdminController extends BaseController {
 	private Response updateWord(Command command, Context cont) {
 		Response response = new Response();
 
-		// TODO: implementar actualización de palabra.
-		// Ruta esperada desde el front:
-		// admin/update-word/word=NOMBRE|CATEGORIA|PISTA|PUNTAJE
+		try {
+			String oldWord = command.getParameter("oldWord");
+			String sNewWord = command.getParameter("newWord");
 
-		response.setMessage("bad=Metodo update-word aun no implementado");
+			Word newWord = this.wordDeserializer.deserealize(sNewWord, Word.class);
+			newWord.setUsername(cont.getSessionData().getUserName());
+
+			this.words.updateWord(oldWord, newWord);
+
+			response.setMessage("ok");
+		}
+		catch (ValidatorException e) {
+			response.setMessage("bad" + e.getMessage());
+		}
+		catch (Exception e) {
+			response.setMessage("bad=" + e.getMessage());
+		}
+
 		return response;
 	}
 
@@ -114,11 +132,11 @@ public class AdminController extends BaseController {
 	private Response getCategories(Command command, Context cont) {
 		Response response = new Response();
 
-		// TODO: implementar listado de categorías.
-		// Formato esperado por el front:
-		// Cultura;Gastronomia;Deporte
-
-		response.setMessage("bad=Metodo get-categories aun no implementado");
+		List<String> categories = this.categories.getAll();
+		String sCategories = this.categorySerializer.serialize(categories);
+		
+		response.setMessage(sCategories);
+		
 		return response;
 	}
 }

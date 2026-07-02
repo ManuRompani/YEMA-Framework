@@ -17,6 +17,9 @@ namespace JuegoAhorcadoBlazorServer.Services
             if (response.Equals("repetida", StringComparison.OrdinalIgnoreCase))
                 return BackendResponse.Repeated();
 
+            if (response.Equals("unauthorized", StringComparison.OrdinalIgnoreCase))
+                return BackendResponse.Unauthorized();
+
             if (response.StartsWith("bad=", StringComparison.OrdinalIgnoreCase))
             {
                 string message = response.Substring("bad=".Length);

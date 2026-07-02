@@ -1,6 +1,8 @@
 @page "/jugar"
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
+@inject ScoreNegocio ScoreNegocio
+
 
 <div class="game-layout">
     <div class="game-top-bar">
@@ -165,7 +167,7 @@
         return CurrentWord.ToUpper().Contains(letter) ? "correct" : "wrong";
     }
 
-    private void GuessLetter(char letter)
+    private async Task GuessLetter(char letter)
     {
         if (GuessedLetters.Contains(letter) || GameOver) return;
 
@@ -173,15 +175,19 @@
 
         if (!CurrentWord.ToUpper().Contains(letter))
         {
+
+
             Errors++;
             if (Errors >= 3)
             {
                 Lives--;
+
                 if (Lives <= 0)
                 {
                     GameOver = true;
                     ShowDefeatModal = true;
-                }
+                    await SendScore();
+                }               
                 else
                 {
                     Errors = 0;
@@ -207,9 +213,18 @@
         ShowExitModalFlag = true;
     }
 
-    private void GoToMenu()
+    private async Task GoToMenu()
     {
+        await SendScore();
         Navigation.NavigateTo("/");
+    }
+
+    private async Task SendScore()
+    {
+        if (Points > 0)
+        {
+            await ScoreNegocio.UpdateScore(Points, Round);
+        }
     }
 
     private void GoToPositions()

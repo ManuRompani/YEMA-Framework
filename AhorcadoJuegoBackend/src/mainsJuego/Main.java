@@ -2,13 +2,13 @@ package mainsJuego;
 
 import java.io.IOException;
 
+import containers.GameContainer;
 import containers.MemoryUserManager;
 import containers.ScoreContainer;
 import containers.WordCategoryContainer;
 import containers.WordContainer;
 import controllers.ScoreController;
-import controllers.WordsController;
-import models.Word;
+import controllers.GameController;
 import services.YemaApp;
 import services.YemaAppBuilder;
 
@@ -20,15 +20,18 @@ public class Main {
 		builder.useSocketAsCommunicator();
 		builder.setSocketPort(80);
 		
-		builder.addController("words", new WordsController());
+		builder.addController("game", new GameController());
 		builder.addController("score", new ScoreController());
 		
 		MemoryUserManager userManager = new MemoryUserManager();
+		WordContainer wordContainer = new WordContainer();
+		GameContainer gameContainer = new GameContainer(wordContainer);
 		
-		builder.addService(userManager);;
-		builder.addService(new WordContainer());
+		builder.addService(userManager);
+		builder.addService(wordContainer);
 		builder.addService(new WordCategoryContainer());
 		builder.addService(new ScoreContainer(userManager));
+		builder.addService(gameContainer);
 		YemaApp app = builder.build();
 		
 		app.run();

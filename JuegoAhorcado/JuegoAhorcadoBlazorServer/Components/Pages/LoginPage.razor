@@ -118,13 +118,21 @@
                     Pass = model.Password
                 };
 
-                Player playerLogueado = await PlayerNegocio.Login(cred);
+                Player? playerLogueado = await PlayerNegocio.Login(cred);
 
-                successMessage = $"Bienvenido {playerLogueado.Name}";
+                if (playerLogueado == null)
+                {
+                    errorMessage = "Credenciales inválidas.";
+                }
+                else
+                {
+                    successMessage = $"Bienvenido {playerLogueado.Name}";
 
-                await Task.Delay(500);
+                    await Task.Delay(500);
 
-                Navigation.NavigateTo("/jugar");
+                    Navigation.NavigateTo("/jugar");
+                }
+
             }
             else
             {

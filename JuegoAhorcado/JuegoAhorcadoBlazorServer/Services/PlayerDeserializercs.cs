@@ -4,9 +4,13 @@ namespace JuegoAhorcadoBlazorServer.Services
 {
     public class PlayerDeserializer
     {
-        public Player Deserialize(string text)
+        public Player? Deserialize(string text)
         {
-            string[] values = text.Split('%');
+            if(text == "null")
+            {
+                return null;
+            }
+            string[] values = text.Split('|');
 
             Player player = new Player
             {

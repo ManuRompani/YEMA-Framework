@@ -9,11 +9,11 @@ namespace JuegoAhorcadoBlazorServer.Services
             string values = "";
 
             values += player.Id;
-            values += "%" + player.Name;
-            values += "%" + player.Pass;
-            values += "%" + player.Role;
-            values += "%" + player.Rounds;
-            values += "%" + player.Points;
+            values += "|" + player.Name;
+            values += "|" + player.Pass;
+            values += "|" + player.Role;
+            values += "|" + player.Rounds;
+            values += "|" + player.Points;
 
             return values;
         }

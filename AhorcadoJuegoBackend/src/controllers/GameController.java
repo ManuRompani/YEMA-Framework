@@ -9,7 +9,6 @@ import dtos.Response;
 import exceptions.ServiceNotImplementedException;
 import framework_controllers.BaseController;
 import models.Word;
-import models.WordCategory;
 import services.ServiceLocator;
 import utils.Context;
 
@@ -48,12 +47,6 @@ public class GameController extends BaseController {
 			case "list":
 				response.setMessage(listWords(command));
 				break;
-			case "add":
-				response.setMessage(addWord(command));
-				break;
-			case "delete":
-				response.setMessage(deleteWord(command));
-				break;
 			case "categories":
 				response.setMessage(listCategories());
 				break;
@@ -69,7 +62,7 @@ public class GameController extends BaseController {
 		ArrayList<Word> words;
 
 		if (catId != null) {
-			words = wordContainer.getWordsByCategory(Integer.parseInt(catId));
+			words = wordContainer.getWordsByCategory(catId);
 		} else {
 			words = wordContainer.getAllWords();
 		}
@@ -77,45 +70,15 @@ public class GameController extends BaseController {
 		StringBuilder sb = new StringBuilder("PALABRAS:\n");
 		for (Word w : words) {
 			sb.append("- ").append(w.getName())
-			  .append(" [").append(w.getCategory().getDescription()).append("]")
+			  .append(" [").append(w.getCategory()).append("]")
 			  .append(" Pista: ").append(w.getHint()).append("\n");
 		}
 		return sb.toString();
 	}
 
-	private String addWord(Command command) {
-		String name = command.getParameter("name");
-		String hint = command.getParameter("hint");
-		String catId = command.getParameter("categoryId");
-
-		if (name == null || hint == null || catId == null) {
-			return "Faltan parámetros: name, hint, categoryId requeridos.";
-		}
-
-		try {
-			WordCategory cat = categoryContainer.getCategoryById(Integer.parseInt(catId));
-			Word word = new Word(name.toUpperCase(), cat, hint);
-			wordContainer.addWord(word);
-			return "Palabra '" + name.toUpperCase() + "' agregada correctamente.";
-		} catch (Exception e) {
-			return "Error: " + e.getMessage();
-		}
-	}
-
-	private String deleteWord(Command command) {
-		String name = command.getParameter("name");
-		if (name == null) {
-			return "Parámetro 'name' requerido.";
-		}
-		boolean removed = wordContainer.removeWord(name);
-		return removed
-			? "Palabra '" + name + "' eliminada."
-			: "Palabra '" + name + "' no encontrada.";
-	}
-
 	private String listCategories() {
 		WordCategorySerializer serializer = new WordCategorySerializer();
-		List<WordCategory> cats = this.categoryContainer.getAll();
+		List<String> cats = this.categoryContainer.getAll();
 		return serializer.serialize(cats);
 	}
 

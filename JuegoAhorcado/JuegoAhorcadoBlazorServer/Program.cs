@@ -9,6 +9,7 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddSingleton(_ => new Comunicador());
 builder.Services.AddScoped<PlayerNegocio>();
+builder.Services.AddScoped<WordNegocio>();
 builder.Services.AddScoped<ScoreNegocio>();
 
 var app = builder.Build();

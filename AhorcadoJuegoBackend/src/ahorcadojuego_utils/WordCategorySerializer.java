@@ -1,32 +1,30 @@
 package ahorcadojuego_utils;
 
 import java.util.List;
-import models.WordCategory;
 import services.Serializer;
 
 public class WordCategorySerializer implements Serializer {
 
-    @Override
-    public String serialize(Object cats) {
-        List<WordCategory> categories = (List<WordCategory>) cats;
-        
-        if (categories == null || categories.isEmpty()) {
-            return "";
-        }
+	@Override
+	public String serialize(Object obj) {
+	    List<String> categories = (List<String>) obj;
 
-        StringBuilder serialized = new StringBuilder();
+	    if (categories == null || categories.isEmpty()) {
+	        return "";
+	    }
 
-        for (int i = 0; i < categories.size(); i++) {
-            WordCategory cat = categories.get(i);
-            serialized.append(cat.getId())
-                .append("%")
-                .append(cat.getDescription());
+	    StringBuilder serialized = new StringBuilder();
 
-            if (i < categories.size() - 1) {
-                serialized.append(";");
-            }
-        }
+	    for (int i = 0; i < categories.size(); i++) {
+	        String cat = categories.get(i);
 
-        return serialized.toString();
-    }
+	        serialized.append(cat);
+
+	        if (i < categories.size() - 1) {
+	            serialized.append(";");
+	        }
+	    }
+
+	    return serialized.toString();
+	}
 }

@@ -13,11 +13,11 @@ public class PlayerSerializer implements Serializer{
 	            String values = "";
 
 	            values += player.getId();
-	            values += "%" + player.getName();
-	            values += "%" + player.getPass();
-	            values += "%" + player.getRole();
-	            values += "%" + player.getRounds();
-	            values += "%" + player.getPoints();
+	            values += "|" + player.getName();
+	            values += "|" + player.getPass();
+	            values += "|" + player.getRole();
+	            values += "|" + player.getRounds();
+	            values += "|" + player.getPoints();
 
 	            return values;
 

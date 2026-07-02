@@ -1,139 +1,397 @@
+
+@inject NavigationManager Navigation
+@using JuegoAhorcadoBlazorServer.Modelo
+@using JuegoAhorcadoBlazorServer.Services
+
+@inject WordNegocio WordNegocio
+
 <div class="admin-header">
     <h2 class="admin-section-title">Palabras <span>(@Words.Count)</span></h2>
     <button class="btn-add" @onclick="ShowAddForm">+ Agregar</button>
 </div>
 
-@if (showForm)
+@if (!string.IsNullOrWhiteSpace(message))
 {
-    <div class="admin-form-card">
-        <div class="admin-form-title">NUEVA PALABRA</div>
-        <div class="admin-form-row">
-            <div class="admin-form-group">
-                <label>PALABRA *</label>
-                <input type="text" placeholder="EJEMPLO" @bind="formWord" />
-            </div>
-            <div class="admin-form-group">
-                <label>PISTA *</label>
-                <input type="text" placeholder="Descripción..." @bind="formHint" />
-            </div>
-            <div class="admin-form-group">
-                <label>CATEGORÍA</label>
-                <input type="text" placeholder="Ej: Gastronomía" @bind="formCategory" />
-            </div>
-        </div>
-        <div class="admin-form-buttons">
-            <button class="btn-save" @onclick="AddWord">Agregar</button>
-            <button class="btn-cancel" @onclick="CancelForm">Cancelar</button>
-        </div>
+    <div class="@messageClass">
+        @message
     </div>
 }
 
-<table class="admin-table">
-    <thead>
-        <tr>
-            <th>PALABRA</th>
-            <th>LETS.</th>
-            <th>CATEGORÍA</th>
-            <th>PISTA</th>
-            <th>ACCIONES</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var word in Words)
-        {
+@if (isLoading)
+{
+    <div class="admin-loading">
+        Cargando palabras...
+    </div>
+}
+else
+{
+    @if (showForm)
+    {
+        <div class="admin-form-card">
+            <div class="admin-form-title">
+                @(isEditing ? "EDITAR PALABRA" : "NUEVA PALABRA")
+            </div>
+
+            <div class="admin-form-row">
+                <div class="admin-form-group">
+                    <label>PALABRA *</label>
+                    <input type="text"
+                           placeholder="EJEMPLO"
+                           @bind="formWord" />
+                </div>
+
+                <div class="admin-form-group">
+                    <label>PISTA *</label>
+                    <input type="text"
+                           placeholder="Descripción..."
+                           @bind="formHint" />
+                </div>
+
+                <div class="admin-form-group">
+                    <label>CATEGORÍA *</label>
+
+                    <select @bind="formCategory">
+                        <option value="">Seleccione una categoría</option>
+
+                        @foreach (string category in Categories)
+                        {
+                            <option value="@category">@category</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="admin-form-group">
+                    <label>PUNTAJE *</label>
+                    <input type="number"
+                           min="1"
+                           placeholder="10"
+                           @bind="formScore" />
+                </div>
+            </div>
+
+            <div class="admin-form-buttons">
+                @if (isEditing)
+                {
+                    <button class="btn-save" @onclick="UpdateWord">Guardar</button>
+                }
+                else
+                {
+                    <button class="btn-save" @onclick="AddWord">Agregar</button>
+                }
+
+                <button class="btn-cancel" @onclick="CancelForm">Cancelar</button>
+            </div>
+        </div>
+    }
+
+    <table class="admin-table">
+        <thead>
             <tr>
-                <td class="word">@word.Name</td>
-                <td>@word.Name.Length</td>
-                <td class="category">@word.Category</td>
-                <td class="hint">@word.Hint</td>
-                <td class="actions">
-                    <button class="btn-edit" @onclick="() => EditWord(word)">Editar</button>
-                    <button class="btn-delete" @onclick="() => DeleteWord(word)">Borrar</button>
-                </td>
+                <th>PALABRA</th>
+                <th>LETS.</th>
+                <th>CATEGORÍA</th>
+                <th>PISTA</th>
+                <th>PUNTAJE</th>
+                <th>ACCIONES</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+
+        <tbody>
+            @if (Words.Count == 0)
+            {
+                <tr>
+                    <td colspan="6" class="empty-table">
+                        No hay palabras cargadas.
+                    </td>
+                </tr>
+            }
+            else
+            {
+                @foreach (WordEntry word in Words)
+                {
+                    <tr>
+                        <td class="word">@word.Name</td>
+                        <td>@word.Name.Length</td>
+                        <td class="category">@word.Category</td>
+                        <td class="hint">@word.Hint</td>
+                        <td>@word.Score</td>
+                        <td class="actions">
+                            <button class="btn-edit" @onclick="() => EditWord(word)">Editar</button>
+                            <button class="btn-delete" @onclick="() => DeleteWord(word)">Borrar</button>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
 
 @code {
+    private string oldWordName = "";
+    private bool shouldRedirectToLogin = false;
+    private bool isLoading = true;
     private bool showForm = false;
+    private bool isEditing = false;
+
     private string formWord = "";
     private string formHint = "";
     private string formCategory = "";
+    private int formScore = 1;
 
-    private List<WordEntry> Words = new()
+    private string message = "";
+    private string messageClass = "";
+
+    private List<WordEntry> Words = new();
+    private List<string> Categories = new();
+
+    protected override async Task OnInitializedAsync()
     {
-        new() { Name = "MATE", Category = "Cultura", Hint = "Bebida típica argentina que se toma con bombilla" },
-        new() { Name = "EMPANADA", Category = "Gastronomía", Hint = "Masa rellena horneada o frita, plato nacional" },
-        new() { Name = "ASADO", Category = "Gastronomía", Hint = "El plato más amado, cocinado a las brasas" },
-        new() { Name = "CHIMICHURRI", Category = "Gastronomía", Hint = "Salsa verde y picante para acompañar la carne" },
-        new() { Name = "FUTBOL", Category = "Deporte", Hint = "El deporte más popular del mundo" },
-        new() { Name = "QUILOMBO", Category = "Lunfardo", Hint = "Gran desorden o lío" },
-        new() { Name = "FIACA", Category = "Lunfardo", Hint = "Pereza, ganas de no hacer nada" },
-        new() { Name = "PIBE", Category = "Lunfardo", Hint = "Chico joven, preadolescente" },
-        new() { Name = "BONDI", Category = "Lunfardo", Hint = "El colectivo porteño" },
-        new() { Name = "CHAMUYO", Category = "Lunfardo", Hint = "Palabrería para convencer o seducir" },
-        new() { Name = "BANDONEON", Category = "Música", Hint = "Instrumento central e indispensable del tango" },
-        new() { Name = "PERONISMO", Category = "Historia", Hint = "Movimiento político fundado en los años 40" },
-        new() { Name = "PATAGONIA", Category = "Geografía", Hint = "Región del sur del país, famosa por su naturaleza" },
-        new() { Name = "DULCEDELECHE", Category = "Gastronomía", Hint = "El manjar más amado, infaltable en las facturas" },
-        new() { Name = "LOCRO", Category = "Gastronomía", Hint = "Guiso patrio del norte, ideal para el 25 de mayo" },
-        new() { Name = "CUMBIA", Category = "Música", Hint = "Género musical bailable muy popular" },
-        new() { Name = "MILANESA", Category = "Gastronomía", Hint = "Carne empanizada y frita, clásica del almuerzo" },
-        new() { Name = "GELATINA", Category = "Gastronomía", Hint = "Postre frío y colorado, favorito de las fiestas" },
-        new() { Name = "TANGO", Category = "Música", Hint = "Baile y género musical emblemático de Buenos Aires" },
-        new() { Name = "PELOTA", Category = "Deporte", Hint = "Objeto esférico usado en casi todos los deportes" },
-        new() { Name = "YERBA", Category = "Cultura", Hint = "Planta base de la bebida nacional argentina" },
-        new() { Name = "PROVINCIA", Category = "Geografía", Hint = "División territorial del país" },
-        new() { Name = "ÑOQUIS", Category = "Gastronomía", Hint = "Pastas caseras, típicas del 29 de cada mes" },
-        new() { Name = "MURCIÉLAGO", Category = "Naturaleza", Hint = "Mamífero volador que sale de noche" },
-        new() { Name = "ALFajor", Category = "Gastronomía", Hint = "Golosina de dos tapas y relleno, icono nacional" }
-    };
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            isLoading = true;
+            ClearMessage();
+
+            Categories = await WordNegocio.GetCategoriesAsync();
+            Words = await WordNegocio.GetWordsAsync();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            // marcar y salir; la navegación se realizará en OnAfterRenderAsync
+            shouldRedirectToLogin = true;
+            return;
+        }
+        catch (Exception ex)
+        {
+            ShowError("Error al cargar datos: " + ex.Message);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (shouldRedirectToLogin && firstRender)
+        {
+            shouldRedirectToLogin = false;
+            // Asegura que la llamada se ejecute en el hilo de la UI/renderer
+            await InvokeAsync(() => Navigation.NavigateTo("/login", forceLoad: true));
+        }
+    }
 
     private void ShowAddForm()
     {
+        ClearForm();
+        ClearMessage();
+
+        isEditing = false;
         showForm = true;
-        formWord = "";
-        formHint = "";
-        formCategory = "";
     }
 
     private void CancelForm()
     {
+        ClearForm();
+
+        isEditing = false;
         showForm = false;
     }
 
-    private void AddWord()
+    private async Task AddWord()
     {
-        if (!string.IsNullOrWhiteSpace(formWord) && !string.IsNullOrWhiteSpace(formHint))
+        if (!ValidateForm())
+            return;
+
+        WordEntry word = BuildWordFromForm();
+
+        try
         {
-            Words.Insert(0, new WordEntry
+            BackendResponse response = await WordNegocio.AddWordAsync(word);
+
+            if (!response.Success)
             {
-                Name = formWord.ToUpper(),
-                Category = formCategory,
-                Hint = formHint
-            });
+                ShowBackendError(response);
+                return;
+            }
+
+            await LoadData();
+
+            ClearForm();
             showForm = false;
+
+            ShowSuccess("Palabra agregada correctamente.");
+        }
+        catch (Exception ex)
+        {
+            ShowError("Error al agregar palabra: " + ex.Message);
         }
     }
 
     private void EditWord(WordEntry word)
     {
+        ClearMessage();
+
+        oldWordName = word.Name;
+
         formWord = word.Name;
         formHint = word.Hint;
         formCategory = word.Category;
+        formScore = word.Score;
+
+        isEditing = true;
         showForm = true;
     }
 
-    private void DeleteWord(WordEntry word)
+    private async Task UpdateWord()
     {
-        Words.Remove(word);
+        if (!ValidateForm())
+            return;
+
+        WordEntry newWord = BuildWordFromForm();
+
+        try
+        {
+            BackendResponse response = await WordNegocio.UpdateWordAsync(oldWordName, newWord);
+
+            if (!response.Success)
+            {
+                ShowBackendError(response);
+                return;
+            }
+
+            await LoadData();
+
+            ClearForm();
+
+            isEditing = false;
+            showForm = false;
+
+            ShowSuccess("Palabra actualizada correctamente.");
+        }
+        catch (Exception ex)
+        {
+            ShowError("Error al actualizar palabra: " + ex.Message);
+        }
     }
 
-    public class WordEntry
+    private async Task DeleteWord(WordEntry word)
     {
-        public string Name { get; set; } = "";
-        public string Category { get; set; } = "";
-        public string Hint { get; set; } = "";
+        try
+        {
+            BackendResponse response = await WordNegocio.DeleteWordAsync(word.Name);
+
+            if (!response.Success)
+            {
+                ShowBackendError(response);
+                return;
+            }
+
+            Words.Remove(word);
+
+            ShowSuccess("Palabra eliminada correctamente.");
+        }
+        catch (Exception ex)
+        {
+            ShowError("Error al eliminar palabra: " + ex.Message);
+        }
+    }
+
+    private WordEntry BuildWordFromForm()
+    {
+        return new WordEntry
+        {
+            Name = NormalizeWord(formWord),
+            Category = formCategory.Trim(),
+            Hint = formHint.Trim(),
+            Score = formScore
+        };
+    }
+
+    private bool ValidateForm()
+    {
+        ClearMessage();
+
+        if (string.IsNullOrWhiteSpace(formWord))
+        {
+            ShowError("Debe ingresar una palabra.");
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(formHint))
+        {
+            ShowError("Debe ingresar una pista.");
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(formCategory))
+        {
+            ShowError("Debe seleccionar una categoría.");
+            return false;
+        }
+
+        if (formScore <= 0)
+        {
+            ShowError("El puntaje debe ser mayor a cero.");
+            return false;
+        }
+
+        return true;
+    }
+
+    private string NormalizeWord(string value)
+    {
+        return value
+            .Trim()
+            .ToUpperInvariant()
+            .Replace(" ", "");
+    }
+
+    private void ClearForm()
+    {
+        oldWordName = "";
+        formWord = "";
+        formHint = "";
+        formCategory = "";
+        formScore = 1;
+    }
+
+    private void ClearMessage()
+    {
+        message = "";
+        messageClass = "";
+    }
+
+    private void ShowSuccess(string text)
+    {
+        message = text;
+        messageClass = "admin-message success";
+    }
+
+    private void ShowError(string text)
+    {
+        message = text;
+        messageClass = "admin-message error";
+    }
+
+    private void ShowBackendError(BackendResponse response)
+    {
+        if (response.IsUnauthorized)
+        {
+            Navigation.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+
+        if (response.IsRepeated)
+        {
+            ShowError("La palabra ya existe.");
+            return;
+        }
+
+        ShowError(response.Message);
     }
 }

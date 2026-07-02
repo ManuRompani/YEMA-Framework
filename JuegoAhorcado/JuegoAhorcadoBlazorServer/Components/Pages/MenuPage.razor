@@ -1,5 +1,6 @@
 @page "/"
 @rendermode InteractiveServer
+
 @inject NavigationManager Navigation
 
 <div class="menu-page">
@@ -12,6 +13,7 @@
     <div class="menu-buttons">
         <button class="btn-play primary" @onclick="GoToPlay">&#x26A1; Jugar</button>
         <button class="btn-play secondary" @onclick="GoToPositions">&#x1F3C6; Ver Posiciones</button>
+        <button class="btn-play secondary" @onclick="GoToAgregarPalabra">Agregar palabra</button>
     </div>
 
     <div class="menu-footer">A B C D E F G H I J K L M N Ñ O P Q R S T U V W X Y Z</div>
@@ -23,13 +25,19 @@
         Navigation.NavigateTo("/login");
     }
 
+    private void GoToAgregarPalabra()
+    {
+        Navigation.NavigateTo("/login?returnUrl=/admin");
+    }
+
     private void GoToPlay()
     {
-        Navigation.NavigateTo("/login");
+        Navigation.NavigateTo("/login?returnUrl=/jugar");
     }
 
     private void GoToPositions()
     {
         Navigation.NavigateTo("/posiciones");
     }
+}
 }

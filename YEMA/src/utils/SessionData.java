@@ -6,12 +6,10 @@ import model.UserBase;
 
 public class SessionData {
 	private HashMap<String, Object> attributes;	 
-	private UserBase user;
 	
 	public SessionData(UserBase user) {
 		this.attributes = new HashMap<>();
 		this.attributes.put("userName", user.getName());
-		this.user = user;
 	}
 
 	//Es un atajo, pero se puede usar tranquilamente el getAttribute
@@ -26,8 +24,5 @@ public class SessionData {
 	public Object getAttribute(String key) {
 		return this.attributes.get(key);
 	}
-	
-	public UserBase getUser() {
-		return this.user;
-	}
+
 }

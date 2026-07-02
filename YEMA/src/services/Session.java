@@ -34,43 +34,36 @@ public class Session implements Runnable {
 	public void run() {
 
 		Response response = new Response();
-
-		Context context = new Context(this.sessionData, this.serviceLocator);
-		
-		// =======INGRESO DE COMANDOS===========
-		// Una vez el usuario se loguea con exito, entramos en loop de comandos.
-		
+		Context context = new Context(this.serviceLocator);		
 		
 		while (true) {
-
 			String sMessage = communicator.receive();
 			
 			if (sMessage == null) {
 			    System.out.println("Cliente desconectado");
 			    return;
 			}
-
+			
 			try {
 				System.out.println(sMessage);
-
 				if (sMessage.toLowerCase().trim().equals("salir")) {
 					communicator.send("Saliendo....");
 					System.out.println("Hilo terminado: " + Thread.currentThread().getName()); // SOLO PARA PRUEBAS
 					return;
 				}
 
-				Command command = parser.Parse(sMessage);
-				
+				Command command = parser.Parse(sMessage);				
 				BaseController controller = this.controllerLocator.getController(command.getResource());
 				// Se valida que el usuario este autorizado a usar el controlador
 				//
 				// Lo valido en la sesion para que cada usuario se autogestione y no que 
 				// el controlador que todos comparten deba decir si esta o no autorizado
-				if(!this.isUserAuthorizedToUse(controller)) {
+				if(!this.isUserAuthorizedToUse(controller, context)) {
 					response.setMessage("Unauthorized access.");
 				}
 				else {
 					response = controller.Ejecutar(command, context);
+					
 				}
 
 			} catch (InvalidCommandException e) {
@@ -90,14 +83,20 @@ public class Session implements Runnable {
 
 	}
 	
-	private boolean isUserAuthorizedToUse(Object obj) {
+	private boolean isUserAuthorizedToUse(Object obj, Context context) {
 		boolean hasAnnotation = obj.getClass().isAnnotationPresent(AuthorizedRoles.class);
 
 	    if (!hasAnnotation) {
 	        return true;
 	    }
+	    	   
 	    
-	    String userRole = this.sessionData.getUser().getRole();
+	    if(context == null || context.getUser() == null) {
+	    	return false;
+	    }
+	    
+	    String userRole = context.getUser().getRole();//le consulto al contexto quien es el user que tiene y que rol
+	    
 	    
 	    if(userRole == null) {
 	    	return false;

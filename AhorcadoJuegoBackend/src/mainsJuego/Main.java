@@ -27,6 +27,7 @@ public class Main {
 		builder.addController("game", new GameController());
 		builder.addController("score", new ScoreController());
 		builder.addController("auth", new AuthController());
+		builder.addController("words", new WordsController());
 		
 		MemoryUserManager userManager = new MemoryUserManager();
 		WordContainer wordContainer = new WordContainer();

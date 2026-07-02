@@ -33,7 +33,7 @@ public class ScoreController extends BaseController {
             case "update":
                 String ptsS = command.getParameter("points");
                 String roundsS = command.getParameter("rounds");
-                String username = context.getSessionData().getUserName();
+                String username = context.getUser().getName();
 
                 if (ptsS == null || roundsS == null) {
                     response.setMessage("Faltan parametros: points y rounds requeridos.");
@@ -68,7 +68,7 @@ public class ScoreController extends BaseController {
                 break;
 
             case "myposition":
-                String currentUser = context.getSessionData().getUserName();
+                String currentUser = context.getUser().getName();
                 List<Player> topFive = scoreContainer.getBestFive();
                 boolean found = false;
 

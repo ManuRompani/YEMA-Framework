@@ -79,6 +79,12 @@ public class ScoreContainer {
 		}
 	
 	public List<Player> getBestFive() {
-		return new ArrayList<Player>(this.bestFiveRanking);
+		List<Player> resultado = new ArrayList<Player>(this.bestFiveRanking);
+		
+		if(resultado.isEmpty()) {
+			return null;
+		}
+		
+		return resultado;
 	}
 }

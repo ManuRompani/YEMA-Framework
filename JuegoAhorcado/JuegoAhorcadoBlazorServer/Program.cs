@@ -12,6 +12,7 @@ builder.Services.AddScoped<SessionState>();
 builder.Services.AddScoped<PlayerNegocio>();
 builder.Services.AddScoped<WordNegocio>();
 builder.Services.AddScoped<ScoreNegocio>();
+builder.Services.AddScoped<GameNegocio>();
 
 var app = builder.Build();
 

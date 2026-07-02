@@ -1,11 +1,27 @@
 @page "/jugar"
 @rendermode InteractiveServer
 @using JuegoAhorcadoBlazorServer.Services
+@using JuegoAhorcadoBlazorServer.Negocio
 @inject NavigationManager Navigation
 @inject ScoreNegocio ScoreNegocio
+@inject GameNegocio GameNegocio
 @inject SessionState Session
 
-
+@if (NoWordsAvailable)
+{
+    <div class="game-layout">
+        <div class="game-content" style="justify-content: center; align-items: center; min-height: 60vh;">
+            <div style="text-align: center;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">&#x1F4AD;</div>
+                <h2 style="margin-bottom: 0.5rem;">En este momento no hay palabras para jugar</h2>
+                <p style="color: #999; margin-bottom: 2rem;">Esperá a que el admin agregue palabras nuevas</p>
+                <button class="btn-modal primary" @onclick="GoToMenu">Volver al menú</button>
+            </div>
+        </div>
+    </div>
+}
+else
+{
 <div class="game-layout">
     <div class="game-top-bar">
         <button class="exit-btn" @onclick="ShowExitModal">&#x2715; Salir</button>
@@ -32,7 +48,7 @@
         <div class="game-sidebar">
             <div class="hangman-card">
                 <HangmanDrawing Errors="Errors" />
-                <p class="error-count">@Errors / 3 errores</p>
+                <p class="error-count">@Errors / 6 errores</p>
             </div>
 
             <div class="info-card">
@@ -41,14 +57,6 @@
 
                 <div class="info-label">PISTA</div>
                 <p class="hint-text">"@Hint"</p>
-
-                <div class="info-label">VALE</div>
-                <div class="points-display">
-                    <span class="points-number">@BasePoints</span>
-                    <span class="points-unit"> pts</span>
-                    <span class="bonus-badge">+@BonusPoints bonus</span>
-                </div>
-                <p class="points-note">@PointsNote</p>
             </div>
         </div>
 
@@ -57,26 +65,24 @@
                 @foreach (var row in WordRows)
                 {
                     <div class="word-row">
-                        @foreach (var letter in row)
+                        @foreach (var cell in row)
                         {
-                            @if (letter == ' ')
+                            @if (cell == " ")
                             {
                                 <div class="letter-slot space"></div>
                             }
-                            else if (GuessedLetters.Contains(char.ToUpper(letter)))
+                            else if (cell == "_")
                             {
-                                <div class="letter-slot revealed">@char.ToUpper(letter)</div>
+                                <div class="letter-slot">&nbsp;</div>
                             }
                             else
                             {
-                                <div class="letter-slot">&nbsp;</div>
+                                <div class="letter-slot revealed">@cell</div>
                             }
                         }
                     </div>
                 }
             </div>
-
-            <p class="word-length">@CurrentWord.Length letras</p>
 
             <div class="keyboard">
                 @foreach (var row in KeyboardRows)
@@ -86,7 +92,7 @@
                         {
                             <button class="key-btn @GetKeyClass(letter)"
                                     @onclick="() => GuessLetter(letter)"
-                                    disabled="@(GuessedLetters.Contains(letter) || GameOver)">
+                                    disabled="@(UsedLetters.Contains(letter) || GameOver)">
                                 @letter
                             </button>
                         }
@@ -96,6 +102,23 @@
         </div>
     </div>
 </div>
+}
+
+@if (ShowWinModal)
+{
+    <div class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-icon">&#x1F389;</div>
+            <h2 class="modal-title" style="color: #22c55e;">¡Ganaste!</h2>
+            <p class="modal-message">La palabra era <span class="modal-word">@RevealedWord.ToUpper()</span></p>
+            <p class="modal-message">Ganaste <span class="highlight">@RoundPoints puntos</span> en esta ronda</p>
+            <div class="modal-buttons">
+                <button class="btn-modal primary" @onclick="NextRound">Siguiente palabra</button>
+                <button class="btn-modal accent" @onclick="GoToPositions">Ver posiciones</button>
+            </div>
+        </div>
+    </div>
+}
 
 @if (ShowDefeatModal)
 {
@@ -103,7 +126,7 @@
         <div class="modal-content">
             <div class="modal-icon">&#x1F480;</div>
             <h2 class="modal-title defeat">¡Perdiste!</h2>
-            <p class="modal-message">La palabra era <span class="modal-word">@CurrentWord.ToUpper()</span></p>
+            <p class="modal-message">La palabra era <span class="modal-word">@RevealedWord.ToUpper()</span></p>
             <p class="modal-message">No llegaste a acumular puntos esta vez</p>
             <div class="modal-buttons">
                 <button class="btn-modal accent" @onclick="GoToPositions">Ver tabla de posiciones</button>
@@ -132,16 +155,17 @@
     private string Username = "";
     private int Round = 1;
     private int Points = 0;
-    private int Lives = 3;
+    private int Lives = 6;
     private int Errors = 0;
-    private string Category = "Gastronomía";
-    private string Hint = "El manjar más amado, infaltable en las facturas";
-    private int BasePoints = 30;
-    private int BonusPoints = 15;
-    private string PointsNote = "Palabras largas (8+ letras)";
-    private string CurrentWord = "DULCEDELECHE";
-    private HashSet<char> GuessedLetters = new();
+    private string Hint = "";
+    private string Category = "";
+    private int RoundPoints = 0;
+    private string MaskedWord = "";
+    private string RevealedWord = "";
+    private HashSet<char> UsedLetters = new();
+    private bool NoWordsAvailable = false;
     private bool ShowDefeatModal = false;
+    private bool ShowWinModal = false;
     private bool ShowExitModalFlag = false;
     private bool GameOver = false;
 
@@ -152,15 +176,33 @@
         "TUVWXYZ"
     };
 
-    private List<List<char>> WordRows => CurrentWord
-        .ToUpper()
-        .Split(' ', StringSplitOptions.RemoveEmptyEntries)
-        .Select(w => w.ToList())
-        .ToList();
+    private List<List<string>> WordRows => ParseMaskedWord(MaskedWord);
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         Username = Session.CurrentUser?.Name ?? "Jugador";
+        await StartNewGame();
+    }
+
+    private async Task StartNewGame()
+    {
+        GameState state = await GameNegocio.StartGameAsync();
+
+        if (!string.IsNullOrEmpty(state.ErrorMessage))
+        {
+            NoWordsAvailable = true;
+            return;
+        }
+
+        MaskedWord = state.MaskedWord;
+        Lives = state.Lives;
+        Hint = state.Hint;
+        Category = state.Category;
+        Errors = 0;
+        GameOver = false;
+        ShowDefeatModal = false;
+        ShowWinModal = false;
+        UsedLetters.Clear();
     }
 
     private string GetHearts()
@@ -170,49 +212,50 @@
 
     private string GetKeyClass(char letter)
     {
-        if (!GuessedLetters.Contains(letter)) return "";
-        return CurrentWord.ToUpper().Contains(letter) ? "correct" : "wrong";
+        if (!UsedLetters.Contains(letter)) return "";
+        return MaskedWord.ToUpper().Contains(letter) ? "correct" : "wrong";
     }
 
     private async Task GuessLetter(char letter)
     {
-        if (GuessedLetters.Contains(letter) || GameOver) return;
+        if (UsedLetters.Contains(letter) || GameOver) return;
 
-        GuessedLetters.Add(letter);
+        UsedLetters.Add(letter);
 
-        if (!CurrentWord.ToUpper().Contains(letter))
+        GameState state = await GameNegocio.GuessLetterAsync(letter);
+
+        if (!string.IsNullOrEmpty(state.ErrorMessage))
+            return;
+
+        Lives = state.Lives;
+
+        if (state.Status == "won")
         {
-
-
-            Errors++;
-            if (Errors >= 3)
-            {
-                Lives--;
-
-                if (Lives <= 0)
-                {
-                    GameOver = true;
-                    ShowDefeatModal = true;
-                    await SendScore();
-                }               
-                else
-                {
-                    Errors = 0;
-                    GuessedLetters.Clear();
-                }
-            }
+            GameOver = true;
+            RevealedWord = state.RevealedWord;
+            RoundPoints = 30;
+            Points += RoundPoints;
+            ShowWinModal = true;
+        }
+        else if (state.Status == "lost")
+        {
+            GameOver = true;
+            RevealedWord = state.RevealedWord;
+            ShowDefeatModal = true;
+            await SendScore();
         }
         else
         {
-            var uniqueLetters = CurrentWord.ToUpper().Where(c => c != ' ').Distinct().ToList();
-            if (uniqueLetters.All(l => GuessedLetters.Contains(l)))
-            {
-                Points += BasePoints;
-                Round++;
-                GuessedLetters.Clear();
-                Errors = 0;
-            }
+            MaskedWord = state.MaskedWord;
+            Errors = 6 - Lives;
         }
+    }
+
+    private async Task NextRound()
+    {
+        ShowWinModal = false;
+        Round++;
+        await StartNewGame();
     }
 
     private void ShowExitModal()
@@ -237,5 +280,24 @@
     private void GoToPositions()
     {
         Navigation.NavigateTo("/posiciones");
+    }
+
+    private List<List<string>> ParseMaskedWord(string maskedWord)
+    {
+        var words = new List<List<string>>();
+
+        if (string.IsNullOrWhiteSpace(maskedWord))
+            return words;
+
+        string[] wordGroups = maskedWord.Split(new[] { "  " }, StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (string group in wordGroups)
+        {
+            var letters = group.Split(' ', StringSplitOptions.RemoveEmptyEntries).ToList();
+            if (letters.Any())
+                words.Add(letters);
+        }
+
+        return words;
     }
 }

@@ -11,11 +11,11 @@ import containers.WordContainer;
 import controllers.AdminController;
 import controllers.AuthController;
 import controllers.ScoreController;
-import controllers.WordsController;
 import juegoUtils.PlayerDeserializer;
 import juegoUtils.PlayerSerializer;
 import juegoUtils.WordDeserializer;
 import juegoUtils.WordListSerializer;
+import juegoUtils.GameResponseSerializer;
 import controllers.GameController;
 import services.YemaApp;
 import services.YemaAppBuilder;
@@ -32,7 +32,6 @@ public class Main {
 		builder.addController("score", new ScoreController());
 		builder.addController("auth", new AuthController());
 		builder.addController("admin", new AdminController());
-		builder.addController("words", new WordsController());
 		
 		MemoryUserManager userManager = new MemoryUserManager();
 		WordContainer wordContainer = new WordContainer();
@@ -47,6 +46,7 @@ public class Main {
 		builder.addService(new WordDeserializer());
 		builder.addService(new WordCategorySerializer());
 		builder.addService(new WordListSerializer());
+		builder.addService(new GameResponseSerializer());
 		
 		builder.addService(gameContainer);
 		YemaApp app = builder.build();

@@ -2,7 +2,6 @@ package mainsJuego;
 
 import java.io.IOException;
 
-import ahorcadojuego_utils.WordCategorySerializer;
 import containers.GameContainer;
 import containers.MemoryUserManager;
 import containers.ScoreContainer;
@@ -13,6 +12,7 @@ import controllers.AuthController;
 import controllers.ScoreController;
 import juegoUtils.PlayerDeserializer;
 import juegoUtils.PlayerSerializer;
+import juegoUtils.WordCategorySerializer;
 import juegoUtils.WordDeserializer;
 import juegoUtils.WordListSerializer;
 import juegoUtils.GameResponseSerializer;

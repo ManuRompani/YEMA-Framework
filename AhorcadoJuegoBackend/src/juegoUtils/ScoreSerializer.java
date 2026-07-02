@@ -1,4 +1,4 @@
-package ahorcadojuego_utils;
+package juegoUtils;
 
 import java.util.List;
 

@@ -2,13 +2,13 @@ package controllers;
 
 import java.util.List;
 
-import ahorcadojuego_utils.ScoreSerializer;
 import annotations.AuthorizedRoles;
 import containers.ScoreContainer;
 import dtos.Command;
 import dtos.Response;
 import exceptions.ServiceNotImplementedException;
 import framework_controllers.BaseController;
+import juegoUtils.ScoreSerializer;
 import utils.Context;
 import models.Player;
 import services.ServiceLocator;

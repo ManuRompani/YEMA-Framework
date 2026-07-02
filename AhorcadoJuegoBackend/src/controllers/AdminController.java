@@ -3,7 +3,6 @@ package controllers;
 import java.util.ArrayList;
 import java.util.List;
 
-import ahorcadojuego_utils.WordCategorySerializer;
 import annotations.AuthorizedRoles;
 import consts.Roles;
 import containers.WordCategoryContainer;
@@ -13,6 +12,7 @@ import dtos.Response;
 import exceptions.ServiceNotImplementedException;
 import exceptions.ValidatorException;
 import framework_controllers.BaseController;
+import juegoUtils.WordCategorySerializer;
 import juegoUtils.WordDeserializer;
 import juegoUtils.WordListSerializer;
 import models.Word;

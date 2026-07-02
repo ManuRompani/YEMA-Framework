@@ -11,6 +11,7 @@ import framework_controllers.BaseController;
 import juegoUtils.GameGuessResponse;
 import juegoUtils.GameResponseSerializer;
 import juegoUtils.GameStartResponse;
+import juegoUtils.WordCategorySerializer;
 import models.Word;
 import services.ServiceLocator;
 import utils.Context;
@@ -18,8 +19,6 @@ import utils.Context;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-
-import ahorcadojuego_utils.WordCategorySerializer;
 
 @AuthorizedRoles(roles = {"admin","player"})
 public class GameController extends BaseController {

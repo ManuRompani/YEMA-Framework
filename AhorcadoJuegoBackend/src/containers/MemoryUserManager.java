@@ -1,6 +1,8 @@
 package containers;
 import java.util.ArrayList;
 import java.util.List;
+
+import consts.Roles;
 import dtos.Credentials;
 import interfaces.IUserManager;
 import model.UserBase;
@@ -9,9 +11,15 @@ import models.Player;
 
 public class MemoryUserManager implements IUserManager {
 	// se utiliza para asignar id al usuario sin repetir
-	private int nextUserId = 1;
-	private List<UserBase> listUsers = new ArrayList<UserBase>();
-
+	private int nextUserId = 2;
+	private List<UserBase> listUsers;
+	
+	public MemoryUserManager() {
+		this.listUsers =  new ArrayList<UserBase>();
+		//harcodeamos un admin
+		Player player = new Player(1, "admin", "admin", Roles.ADMIN, 0, 0); 
+		this.listUsers.add(player);
+	}
 	@Override
 	public UserBase getUser(String username) {
 		for (UserBase ub : listUsers) {

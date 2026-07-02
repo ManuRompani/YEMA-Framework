@@ -32,7 +32,7 @@
         <div class="game-sidebar">
             <div class="hangman-card">
                 <HangmanDrawing Errors="Errors" />
-                <p class="error-count">@Errors / 3 errores</p>
+                <p class="error-count">@Errors / 6 errores</p>
             </div>
 
             <div class="info-card">
@@ -185,7 +185,7 @@
 
 
             Errors++;
-            if (Errors >= 3)
+            if (Errors >= 6)
             {
                 Lives--;
 

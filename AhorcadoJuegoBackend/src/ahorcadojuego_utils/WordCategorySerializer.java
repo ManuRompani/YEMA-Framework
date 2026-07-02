@@ -4,10 +4,12 @@ import java.util.List;
 import models.WordCategory;
 import services.Serializer;
 
-public class WordCategorySerializer implements Serializer<List<WordCategory>> {
+public class WordCategorySerializer implements Serializer {
 
     @Override
-    public String serialize(List<WordCategory> categories) {
+    public String serialize(Object cats) {
+        List<WordCategory> categories = (List<WordCategory>) cats;
+        
         if (categories == null || categories.isEmpty()) {
             return "";
         }

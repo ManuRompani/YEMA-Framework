@@ -23,7 +23,6 @@ public class AuthController extends BaseController{
 
 	    // Obtiene el jugador enviado por el cliente y lo convierte a objeto.
 	    String sPlayer = command.getParameter("player");
-	    System.out.println(sPlayer);
 	    Player player = deserializer.deserealize(sPlayer, Player.class);
 	    
 	    // Registra el jugador y recibe el objeto actualizado, por ejemplo con ID.
@@ -34,7 +33,6 @@ public class AuthController extends BaseController{
 	    
 	    // Devuelve el jugador serializado al cliente.
 	    response.setMessage(this.serializer.serialize(player));
-	    System.out.println(response.getMessage());
 	    return response;
 	}
 
@@ -57,7 +55,6 @@ public class AuthController extends BaseController{
 	
 	@Override
 	public Response Ejecutar(Command command, Context context) {
-		System.out.println("Entro al controlador");
 		switch(command.getAction()) {
 		case "register":
 			return this.register(command, context);

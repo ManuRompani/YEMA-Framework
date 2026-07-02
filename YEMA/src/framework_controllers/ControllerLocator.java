@@ -20,7 +20,6 @@ public class ControllerLocator {
 	public BaseController getController(String resource) throws ServiceNotImplementedException {
 		BaseController controller = this.controllers.get(resource.toLowerCase());
 		if (controller == null) {
-			System.out.println("Nuleo");
 			throw new ServiceNotImplementedException(resource);
 			
 		}

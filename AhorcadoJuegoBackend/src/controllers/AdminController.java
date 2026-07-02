@@ -73,7 +73,7 @@ public class AdminController extends BaseController {
 			String sWord = command.getParameter("word");
 
 			Word word = this.wordDeserializer.deserealize(sWord, Word.class);
-			word.setUsername(cont.getSessionData().getUserName());
+			word.setUsername(cont.getUser().getName());
 
 			this.words.addWord(word);
 

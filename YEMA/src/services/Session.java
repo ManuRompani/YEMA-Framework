@@ -34,44 +34,42 @@ public class Session implements Runnable {
 	public void run() {
 
 		Response response = new Response();
-
-		Context context = new Context(this.sessionData, this.serviceLocator);
-		
-		// =======INGRESO DE COMANDOS===========
-		// Una vez el usuario se loguea con exito, entramos en loop de comandos.
-		
+		Context context = new Context(this.serviceLocator);		
 		
 		while (true) {
-
 			String sMessage = communicator.receive();
 			
 			if (sMessage == null) {
 			    System.out.println("Cliente desconectado");
 			    return;
 			}
-
+			
 			try {
 				System.out.println(sMessage);
-
 				if (sMessage.toLowerCase().trim().equals("salir")) {
 					communicator.send("Saliendo....");
 					System.out.println("Hilo terminado: " + Thread.currentThread().getName()); // SOLO PARA PRUEBAS
 					return;
 				}
 
-				Command command = parser.Parse(sMessage);
-				
+				Command command = parser.Parse(sMessage);				
 				BaseController controller = this.controllerLocator.getController(command.getResource());
 				// Se valida que el usuario este autorizado a usar el controlador
 				//
 				// Lo valido en la sesion para que cada usuario se autogestione y no que 
 				// el controlador que todos comparten deba decir si esta o no autorizado
+<<<<<<< HEAD
 				if(!this.isUserAuthorizedToUse(controller)) {
 					response.setMessage("unauthorized");
 					System.out.println("acceso no autorizado");
+=======
+				if(!this.isUserAuthorizedToUse(controller, context)) {
+					response.setMessage("Unauthorized access.");
+>>>>>>> 50e9dcedfcc3ba54d0e1903c42fe364bb7070f91
 				}
 				else {
 					response = controller.Ejecutar(command, context);
+					
 				}
 
 			} catch (InvalidCommandException e) {
@@ -91,18 +89,25 @@ public class Session implements Runnable {
 
 	}
 	
-	private boolean isUserAuthorizedToUse(Object obj) {
+	private boolean isUserAuthorizedToUse(Object obj, Context context) {
 		boolean hasAnnotation = obj.getClass().isAnnotationPresent(AuthorizedRoles.class);
 
 	    if (!hasAnnotation) {
 	        return true;
 	    }
+	    	   
 	    
+	    if(context == null || context.getUser() == null) {
+	    	return false;
+	    }
+	    
+
+	    // valida que el resto de las cosas no sea null antes de tratar de acceder al rol
 	    if(this.sessionData == null || this.sessionData.getUser() == null || this.sessionData.getUser().getRole() == null) {
 	    	return false;
 	    }
 	    
-	    String userRole = this.sessionData.getUser().getRole();
+	    String userRole = context.getUser().getRole();//le consulto al contexto quien es el user que tiene y que rol
 	    
 	    AuthorizedRoles annotation = obj.getClass().getAnnotation(AuthorizedRoles.class);
 

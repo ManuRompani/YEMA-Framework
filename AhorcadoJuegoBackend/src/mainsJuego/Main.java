@@ -11,6 +11,7 @@ import containers.WordContainer;
 import controllers.AdminController;
 import controllers.AuthController;
 import controllers.ScoreController;
+import controllers.WordsController;
 import juegoUtils.PlayerDeserializer;
 import juegoUtils.PlayerSerializer;
 import juegoUtils.WordDeserializer;
@@ -31,6 +32,7 @@ public class Main {
 		builder.addController("score", new ScoreController());
 		builder.addController("auth", new AuthController());
 		builder.addController("admin", new AdminController());
+		builder.addController("words", new WordsController());
 		
 		MemoryUserManager userManager = new MemoryUserManager();
 		WordContainer wordContainer = new WordContainer();

@@ -58,14 +58,10 @@ public class Session implements Runnable {
 				//
 				// Lo valido en la sesion para que cada usuario se autogestione y no que 
 				// el controlador que todos comparten deba decir si esta o no autorizado
-<<<<<<< HEAD
-				if(!this.isUserAuthorizedToUse(controller)) {
+
+				if(!this.isUserAuthorizedToUse(controller, context)) {
 					response.setMessage("unauthorized");
 					System.out.println("acceso no autorizado");
-=======
-				if(!this.isUserAuthorizedToUse(controller, context)) {
-					response.setMessage("Unauthorized access.");
->>>>>>> 50e9dcedfcc3ba54d0e1903c42fe364bb7070f91
 				}
 				else {
 					response = controller.Ejecutar(command, context);

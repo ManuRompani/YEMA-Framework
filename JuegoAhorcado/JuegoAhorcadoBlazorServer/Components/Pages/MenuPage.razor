@@ -1,10 +1,22 @@
 @page "/"
 @rendermode InteractiveServer
 
+@using JuegoAhorcadoBlazorServer.Services
 @inject NavigationManager Navigation
+@inject SessionState Session
 
 <div class="menu-page">
-    <button class="menu-login-btn" @onclick="GoToLogin">Iniciar sesión</button>
+    @if (Session.IsLoggedIn)
+    {
+        <div class="menu-session-info">
+            <span>Sesión: <span>@Session.CurrentUser!.Name</span></span>
+            <button class="menu-login-btn" @onclick="Logout">Cerrar sesión</button>
+        </div>
+    }
+    else
+    {
+        <button class="menu-login-btn" @onclick="GoToLogin">Iniciar sesión</button>
+    }
 
     <div class="menu-icon">&#x1F4FF;</div>
     <h1 class="menu-title">EL AHORCADO</h1>
@@ -27,17 +39,28 @@
 
     private void GoToAgregarPalabra()
     {
-        Navigation.NavigateTo("/login?returnUrl=/admin");
+        if (Session.IsLoggedIn)
+            Navigation.NavigateTo("/admin");
+        else
+            Navigation.NavigateTo("/login?returnUrl=/admin");
     }
 
     private void GoToPlay()
     {
-        Navigation.NavigateTo("/login?returnUrl=/jugar");
+        if (Session.IsLoggedIn)
+            Navigation.NavigateTo("/jugar");
+        else
+            Navigation.NavigateTo("/login?returnUrl=/jugar");
     }
 
     private void GoToPositions()
     {
         Navigation.NavigateTo("/posiciones");
     }
-}
+
+    private void Logout()
+    {
+        Session.Logout();
+        Navigation.NavigateTo("/");
+    }
 }

@@ -99,7 +99,7 @@ public class Session implements Runnable {
 	    
 
 	    // valida que el resto de las cosas no sea null antes de tratar de acceder al rol
-	    if(this.sessionData == null || context.getUser() == null || context.getUser().getRole() == null) {
+	    if(context.getUser() == null || context.getUser().getRole() == null) {
 	    	return false;
 	    }
 	    

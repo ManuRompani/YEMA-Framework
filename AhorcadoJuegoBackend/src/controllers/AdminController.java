@@ -46,6 +46,15 @@ public class AdminController extends BaseController {
 			case "get-categories":
 				return this.getCategories(command, context);
 
+			case "add-category":
+				return this.addCategory(command, context);
+
+			case "delete-category":
+				return this.deleteCategory(command, context);
+
+			case "update-category":
+				return this.updateCategory(command, context);
+
 			default:
 				Response response = new Response();
 				response.setMessage("bad=Accion no reconocida: " + command.getAction());
@@ -114,11 +123,25 @@ public class AdminController extends BaseController {
 	private Response deleteWord(Command command, Context cont) {
 		Response response = new Response();
 
-		// TODO: implementar eliminación de palabra.
-		// Ruta esperada desde el front:
-		// admin/delete-word/word=NOMBRE
+		try {
+			String wordName = command.getParameter("word");
 
-		response.setMessage("bad=Metodo delete-word aun no implementado");
+			if (wordName == null || wordName.trim().isEmpty()) {
+				response.setMessage("bad=El nombre de la palabra no puede estar vacío.");
+				return response;
+			}
+
+			boolean removed = this.words.removeWord(wordName.trim());
+
+			if (removed) {
+				response.setMessage("ok");
+			} else {
+				response.setMessage("bad=La palabra no existe.");
+			}
+		} catch (Exception e) {
+			response.setMessage("bad=" + e.getMessage());
+		}
+
 		return response;
 	}
 
@@ -126,9 +149,14 @@ public class AdminController extends BaseController {
 		Response response = new Response();
 
 		ArrayList<Word> palabras = this.words.getAllWords();
-		String sPalabras = this.wordListSerializer.serialize(palabras);
 		
-		response.setMessage(sPalabras);
+		if(palabras.isEmpty()) {
+			response.setMessage("null");
+		}else {
+			String sPalabras = this.wordListSerializer.serialize(palabras);
+			
+			response.setMessage(sPalabras);	
+		}
 		
 		return response;
 	}
@@ -137,10 +165,120 @@ public class AdminController extends BaseController {
 		Response response = new Response();
 
 		List<String> categories = this.categories.getAll();
-		String sCategories = this.categorySerializer.serialize(categories);
+		if(categories.isEmpty()) {
+			response.setMessage("null");
+		}
+		else {
+			String sCategories = this.categorySerializer.serialize(categories);
+			response.setMessage(sCategories);
+		}
 		
-		response.setMessage(sCategories);
-		
+		return response;
+	}
+
+	private Response addCategory(Command command, Context cont) {
+		Response response = new Response();
+
+		try {
+			String categoryName = command.getParameter("name");
+
+			if (categoryName == null || categoryName.trim().isEmpty()) {
+				response.setMessage("bad=El nombre de la categoría no puede estar vacío.");
+				return response;
+			}
+
+			categoryName = categoryName.trim();
+
+			List<String> existing = this.categories.getAll();
+			for (String cat : existing) {
+				if (cat.equalsIgnoreCase(categoryName)) {
+					response.setMessage("repetida");
+					return response;
+				}
+			}
+
+			this.categories.add(categoryName);
+			response.setMessage("ok");
+		} catch (Exception e) {
+			response.setMessage("bad=" + e.getMessage());
+		}
+
+		return response;
+	}
+
+	private Response deleteCategory(Command command, Context cont) {
+		Response response = new Response();
+
+		try {
+			String categoryName = command.getParameter("name");
+
+			if (categoryName == null || categoryName.trim().isEmpty()) {
+				response.setMessage("bad=El nombre de la categoría no puede estar vacío.");
+				return response;
+			}
+
+			boolean removed = this.categories.delete(categoryName.trim());
+
+			if (removed) {
+				response.setMessage("ok");
+			} else {
+				response.setMessage("bad=La categoría no existe.");
+			}
+		} catch (Exception e) {
+			response.setMessage("bad=" + e.getMessage());
+		}
+
+		return response;
+	}
+
+	private Response updateCategory(Command command, Context cont) {
+		Response response = new Response();
+
+		try {
+			String oldName = command.getParameter("oldName");
+			String newName = command.getParameter("newName");
+
+			if (oldName == null || oldName.trim().isEmpty()) {
+				response.setMessage("bad=El nombre actual de la categoría no puede estar vacío.");
+				return response;
+			}
+
+			if (newName == null || newName.trim().isEmpty()) {
+				response.setMessage("bad=El nuevo nombre de la categoría no puede estar vacío.");
+				return response;
+			}
+
+			oldName = oldName.trim();
+			newName = newName.trim();
+
+			List<String> existing = this.categories.getAll();
+			for (String cat : existing) {
+				if (cat.equalsIgnoreCase(newName) && !cat.equalsIgnoreCase(oldName)) {
+					response.setMessage("repetida");
+					return response;
+				}
+			}
+
+			boolean deleted = this.categories.delete(oldName);
+			if (!deleted) {
+				response.setMessage("bad=La categoría no existe.");
+				return response;
+			}
+
+			this.categories.add(newName);
+
+			ArrayList<Word> allWords = this.words.getAllWords();
+			for (Word word : allWords) {
+				if (word.getCategory().equalsIgnoreCase(oldName)) {
+					word.setCategory(newName);
+				}
+			}
+
+			response.setMessage("ok");
+		} catch (Exception e) {
+			response.setMessage("bad=" + e.getMessage());
+		}
+
 		return response;
 	}
 }

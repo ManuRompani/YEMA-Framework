@@ -1,0 +1,319 @@
+
+@inject NavigationManager Navigation
+@using JuegoAhorcadoBlazorServer.Services
+
+@inject WordNegocio WordNegocio
+
+<div class="admin-header">
+    <h2 class="admin-section-title">Categorías <span>(@(Categories?.Count ?? 0))</span></h2>
+    <button class="btn-add" @onclick="ShowAddForm">+ Agregar</button>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(message))
+{
+    <div class="@messageClass">
+        @message
+    </div>
+}
+
+@if (isLoading)
+{
+    <div class="admin-loading">
+        Cargando categorías...
+    </div>
+}
+else
+{
+    @if (showForm)
+    {
+        <div class="admin-form-card">
+            <div class="admin-form-title">
+                @(isEditing ? "EDITAR CATEGORÍA" : "NUEVA CATEGORÍA")
+            </div>
+
+            <div class="admin-form-row">
+                <div class="admin-form-group" style="flex: 1;">
+                    <label>NOMBRE *</label>
+                    <input type="text"
+                           placeholder="EJEMPLO: ANIMALES"
+                           @bind="formCategoryName"
+                           @bind:event="oninput" />
+                </div>
+            </div>
+
+            <div class="admin-form-buttons">
+                @if (isEditing)
+                {
+                    <button class="btn-save" @onclick="UpdateCategory">Guardar</button>
+                }
+                else
+                {
+                    <button class="btn-save" @onclick="AddCategory">Agregar</button>
+                }
+                <button class="btn-cancel" @onclick="CancelForm">Cancelar</button>
+            </div>
+        </div>
+    }
+
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>CATEGORÍA</th>
+                <th>ACCIONES</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @if (Categories == null || Categories.Count == 0)
+            {
+                <tr>
+                    <td colspan="2" class="empty-table">
+                        No hay categorías cargadas.
+                    </td>
+                </tr>
+            }
+            else
+            {
+                @foreach (string category in Categories)
+                {
+                    <tr>
+                        <td class="category">@category</td>
+                        <td class="actions">
+                            <button class="btn-edit" @onclick="() => EditCategory(category)">Editar</button>
+                            <button class="btn-delete" @onclick="() => DeleteCategory(category)">Borrar</button>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private bool shouldRedirectToLogin = false;
+    private bool isLoading = true;
+    private bool showForm = false;
+    private bool isEditing = false;
+
+    private string oldCategoryName = "";
+    private string formCategoryName = "";
+
+    private string message = "";
+    private string messageClass = "";
+
+    private List<string> Categories = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            isLoading = true;
+            ClearMessage();
+
+            Categories = await WordNegocio.GetCategoriesAsync() ?? new();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            shouldRedirectToLogin = true;
+            return;
+        }
+        catch (Exception ex)
+        {
+            Categories = new();
+            ShowError("Error al cargar categorías: " + ex.Message);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (shouldRedirectToLogin && firstRender)
+        {
+            shouldRedirectToLogin = false;
+            await InvokeAsync(() => Navigation.NavigateTo("/login?returnUrl=/admin", forceLoad: true));
+        }
+    }
+
+    private void ShowAddForm()
+    {
+        formCategoryName = "";
+        ClearMessage();
+        isEditing = false;
+        showForm = true;
+    }
+
+    private void EditCategory(string categoryName)
+    {
+        oldCategoryName = categoryName;
+        formCategoryName = categoryName;
+        ClearMessage();
+        isEditing = true;
+        showForm = true;
+    }
+
+    private void CancelForm()
+    {
+        formCategoryName = "";
+        oldCategoryName = "";
+        isEditing = false;
+        showForm = false;
+    }
+
+    private async Task AddCategory()
+    {
+        ClearMessage();
+
+        if (string.IsNullOrWhiteSpace(formCategoryName))
+        {
+            ShowError("Debe ingresar un nombre de categoría.");
+            return;
+        }
+
+        string name = formCategoryName.Trim().ToUpperInvariant();
+
+        try
+        {
+            BackendResponse response = await WordNegocio.AddCategoryAsync(name);
+
+            if (response.IsUnauthorized)
+            {
+                Navigation.NavigateTo("/login?returnUrl=/admin", forceLoad: true);
+                return;
+            }
+
+            if (response.IsRepeated)
+            {
+                ShowError("La categoría ya existe.");
+                return;
+            }
+
+            if (!response.Success)
+            {
+                ShowError(response.Message);
+                return;
+            }
+
+            await LoadData();
+
+            formCategoryName = "";
+            showForm = false;
+
+            ShowSuccess("Categoría agregada correctamente.");
+        }
+        catch (Exception ex)
+        {
+            ShowError("Error al agregar categoría: " + ex.Message);
+        }
+    }
+
+    private async Task UpdateCategory()
+    {
+        ClearMessage();
+
+        if (string.IsNullOrWhiteSpace(formCategoryName))
+        {
+            ShowError("Debe ingresar un nombre de categoría.");
+            return;
+        }
+
+        string newName = formCategoryName.Trim().ToUpperInvariant();
+
+        if (oldCategoryName.Equals(newName, StringComparison.OrdinalIgnoreCase))
+        {
+            showForm = false;
+            return;
+        }
+
+        try
+        {
+            BackendResponse response = await WordNegocio.UpdateCategoryAsync(oldCategoryName, newName);
+
+            if (response.IsUnauthorized)
+            {
+                Navigation.NavigateTo("/login?returnUrl=/admin", forceLoad: true);
+                return;
+            }
+
+            if (response.IsRepeated)
+            {
+                ShowError("Ya existe una categoría con ese nombre.");
+                return;
+            }
+
+            if (!response.Success)
+            {
+                ShowError(response.Message);
+                return;
+            }
+
+            await LoadData();
+
+            formCategoryName = "";
+            oldCategoryName = "";
+            isEditing = false;
+            showForm = false;
+
+            ShowSuccess("Categoría actualizada correctamente.");
+        }
+        catch (Exception ex)
+        {
+            ShowError("Error al actualizar categoría: " + ex.Message);
+        }
+    }
+
+    private async Task DeleteCategory(string categoryName)
+    {
+        ClearMessage();
+
+        try
+        {
+            BackendResponse response = await WordNegocio.DeleteCategoryAsync(categoryName);
+
+            if (response.IsUnauthorized)
+            {
+                Navigation.NavigateTo("/login?returnUrl=/admin", forceLoad: true);
+                return;
+            }
+
+            if (!response.Success)
+            {
+                ShowError(response.Message);
+                return;
+            }
+
+            Categories.Remove(categoryName);
+
+            ShowSuccess("Categoría eliminada correctamente.");
+        }
+        catch (Exception ex)
+        {
+            ShowError("Error al eliminar categoría: " + ex.Message);
+        }
+    }
+
+    private void ClearMessage()
+    {
+        message = "";
+        messageClass = "";
+    }
+
+    private void ShowSuccess(string text)
+    {
+        message = text;
+        messageClass = "admin-message success";
+    }
+
+    private void ShowError(string text)
+    {
+        message = text;
+        messageClass = "admin-message error";
+    }
+}

@@ -8,6 +8,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddSingleton(_ => new Comunicador());
+builder.Services.AddScoped<SessionState>();
 builder.Services.AddScoped<PlayerNegocio>();
 builder.Services.AddScoped<WordNegocio>();
 builder.Services.AddScoped<ScoreNegocio>();

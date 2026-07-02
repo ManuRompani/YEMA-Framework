@@ -1,7 +1,9 @@
 @page "/jugar"
 @rendermode InteractiveServer
+@using JuegoAhorcadoBlazorServer.Services
 @inject NavigationManager Navigation
 @inject ScoreNegocio ScoreNegocio
+@inject SessionState Session
 
 
 <div class="game-layout">
@@ -127,7 +129,7 @@
 }
 
 @code {
-    private string Username = "admin";
+    private string Username = "";
     private int Round = 1;
     private int Points = 0;
     private int Lives = 3;
@@ -155,6 +157,11 @@
         .Split(' ', StringSplitOptions.RemoveEmptyEntries)
         .Select(w => w.ToList())
         .ToList();
+
+    protected override void OnInitialized()
+    {
+        Username = Session.CurrentUser?.Name ?? "Jugador";
+    }
 
     private string GetHearts()
     {

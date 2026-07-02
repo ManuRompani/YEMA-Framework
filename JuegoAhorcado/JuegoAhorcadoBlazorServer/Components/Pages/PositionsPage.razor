@@ -1,7 +1,9 @@
 @page "/posiciones"
 @rendermode InteractiveServer
+@using JuegoAhorcadoBlazorServer.Services
 @inject NavigationManager Navigation
 @inject ScoreNegocio ScoreNegocio
+@inject SessionState Session
 
 <div class="positions-page">
     <a class="back-link" href="/">&#x2190; Volver al menú</a>
@@ -65,7 +67,10 @@
 
     private void GoToPlay()
     {
-        Navigation.NavigateTo("/login");
+        if (Session.IsLoggedIn)
+            Navigation.NavigateTo("/jugar");
+        else
+            Navigation.NavigateTo("/login?returnUrl=/jugar");
     }
 
 protected override async Task OnInitializedAsync()

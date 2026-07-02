@@ -1,7 +1,9 @@
 @page "/admin"
 @rendermode InteractiveServer
 
+@using JuegoAhorcadoBlazorServer.Services
 @inject NavigationManager Navigation
+@inject SessionState Session
 
 <div class="admin-layout">
     <div class="admin-topbar">
@@ -11,7 +13,7 @@
             <span class="admin-title">Panel Admin</span>
         </div>
 
-        <div class="admin-session">Sesión: <span>admin</span></div>
+        <div class="admin-session">Sesión: <span>@(Session.CurrentUser?.Name ?? "admin")</span></div>
     </div>
 
     <div class="admin-tabs">
@@ -20,9 +22,9 @@
             &#x1F4C4; Palabras
         </button>
 
-        <button class="admin-tab @(activeTab == "rules" ? "active" : "")"
-                @onclick='() => activeTab = "rules"'>
-            &#x2699; Reglas
+        <button class="admin-tab @(activeTab == "categories" ? "active" : "")"
+                @onclick='() => activeTab = "categories"'>
+            &#x1F3F7; Categorías
         </button>
     </div>
 
@@ -33,7 +35,7 @@
         }
         else
         {
-            <RulesTab />
+            <CategoriesTab />
         }
     </div>
 </div>

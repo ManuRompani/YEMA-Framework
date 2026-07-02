@@ -53,7 +53,7 @@ else
                     <select @bind="formCategory">
                         <option value="">Seleccione una categoría</option>
 
-                        @foreach (string category in Categories)
+                        @foreach (string category in Categories ?? new())
                         {
                             <option value="@category">@category</option>
                         }
@@ -156,17 +156,18 @@ else
             isLoading = true;
             ClearMessage();
 
-            Categories = await WordNegocio.GetCategoriesAsync();
-            Words = await WordNegocio.GetWordsAsync();
+            Categories = await WordNegocio.GetCategoriesAsync() ?? new();
+            Words = await WordNegocio.GetWordsAsync() ?? new();
         }
         catch (UnauthorizedAccessException)
         {
-            // marcar y salir; la navegación se realizará en OnAfterRenderAsync
             shouldRedirectToLogin = true;
             return;
         }
         catch (Exception ex)
         {
+            Categories = new();
+            Words = new();
             ShowError("Error al cargar datos: " + ex.Message);
         }
         finally
@@ -181,7 +182,7 @@ else
         {
             shouldRedirectToLogin = false;
             // Asegura que la llamada se ejecute en el hilo de la UI/renderer
-            await InvokeAsync(() => Navigation.NavigateTo("/login", forceLoad: true));
+            await InvokeAsync(() => Navigation.NavigateTo("/login?returnUrl=/admin", forceLoad: true));
         }
     }
 
@@ -382,7 +383,7 @@ else
     {
         if (response.IsUnauthorized)
         {
-            Navigation.NavigateTo("/login", forceLoad: true);
+            Navigation.NavigateTo("/login?returnUrl=/admin", forceLoad: true);
             return;
         }
 

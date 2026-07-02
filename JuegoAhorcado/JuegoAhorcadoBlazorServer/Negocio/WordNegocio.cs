@@ -23,6 +23,9 @@ namespace JuegoAhorcadoBlazorServer.Negocio
             string request = "admin/get-words";
             string response = await _comunicador.EnviarYRecibirAsync(request);
 
+            if (string.IsNullOrWhiteSpace(response) || response.Trim().Equals("null", StringComparison.OrdinalIgnoreCase))
+                return new List<WordEntry>();
+
             ValidateReadResponse(response);
 
             return _wordListDeserializer.Deserialize(response);
@@ -32,6 +35,9 @@ namespace JuegoAhorcadoBlazorServer.Negocio
         {
             string request = "admin/get-categories";
             string response = await _comunicador.EnviarYRecibirAsync(request);
+
+            if (string.IsNullOrWhiteSpace(response) || response.Trim().Equals("null", StringComparison.OrdinalIgnoreCase))
+                return new List<string>();
 
             ValidateReadResponse(response);
 
@@ -68,8 +74,38 @@ namespace JuegoAhorcadoBlazorServer.Negocio
             return _responseDeserializer.Deserialize(response);
         }
 
+        public async Task<BackendResponse> AddCategoryAsync(string categoryName)
+        {
+            string request = $"admin/add-category/name={Uri.EscapeDataString(categoryName)}";
+
+            string response = await _comunicador.EnviarYRecibirAsync(request);
+
+            return _responseDeserializer.Deserialize(response);
+        }
+
+        public async Task<BackendResponse> DeleteCategoryAsync(string categoryName)
+        {
+            string request = $"admin/delete-category/name={Uri.EscapeDataString(categoryName)}";
+
+            string response = await _comunicador.EnviarYRecibirAsync(request);
+
+            return _responseDeserializer.Deserialize(response);
+        }
+
+        public async Task<BackendResponse> UpdateCategoryAsync(string oldName, string newName)
+        {
+            string request = $"admin/update-category/oldName={Uri.EscapeDataString(oldName)}&newName={Uri.EscapeDataString(newName)}";
+
+            string response = await _comunicador.EnviarYRecibirAsync(request);
+
+            return _responseDeserializer.Deserialize(response);
+        }
+
         private void ValidateReadResponse(string response)
         {
+            if (string.IsNullOrWhiteSpace(response))
+                throw new InvalidOperationException("El servidor no devolvió datos.");
+
             BackendResponse backendResponse = _responseDeserializer.Deserialize(response);
 
             if (backendResponse.IsUnauthorized)

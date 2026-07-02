@@ -10,8 +10,7 @@ public class Context {
 	private ServiceLocator sl;
 	
 
-	public Context(SessionData sessionData, ServiceLocator sl) {
-		this.sessionData = sessionData;
+	public Context(ServiceLocator sl) {		
 		this.sl = sl;
 	}
 	
@@ -30,5 +29,10 @@ public class Context {
 
 	public void setUser(UserBase user) {
 		this.user = user;
+		if (this.sessionData == null && user != null) {
+	        this.sessionData = new SessionData(user);
+	    } else if (this.sessionData != null && user != null) {
+	        this.sessionData = new SessionData(user);  // recrear con el nuevo usuario
+	    }
 	}
 }

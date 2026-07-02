@@ -63,7 +63,5 @@ namespace JuegoAhorcadoBlazorServer.Negocio
             }
         }
 
-
-        //Funcionalidades de admin, deberia ir en otra clase pero no da el tiempo
     }
 }

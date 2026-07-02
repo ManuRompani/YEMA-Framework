@@ -1,5 +1,6 @@
 @page "/admin"
 @rendermode InteractiveServer
+
 @inject NavigationManager Navigation
 
 <div class="admin-layout">
@@ -9,12 +10,19 @@
             <span class="admin-divider">|</span>
             <span class="admin-title">Panel Admin</span>
         </div>
+
         <div class="admin-session">Sesión: <span>admin</span></div>
     </div>
 
     <div class="admin-tabs">
-        <button class="admin-tab @(activeTab == "words" ? "active" : "")" @onclick='() => activeTab = "words"'>
+        <button class="admin-tab @(activeTab == "words" ? "active" : "")"
+                @onclick='() => activeTab = "words"'>
             &#x1F4C4; Palabras
+        </button>
+
+        <button class="admin-tab @(activeTab == "rules" ? "active" : "")"
+                @onclick='() => activeTab = "rules"'>
+            &#x2699; Reglas
         </button>
     </div>
 

@@ -1,5 +1,5 @@
 package services;
 
-public interface Serializer<T> {
-	public String serialize(T t);
+public interface Serializer {
+	public <T> String serialize(T t);
 }

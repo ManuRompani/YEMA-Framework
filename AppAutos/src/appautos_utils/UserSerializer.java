@@ -3,12 +3,12 @@ package appautos_utils;
 import model.UserBase;
 import services.Serializer;
 
-public class UserSerializer implements Serializer<UserBase>{
+public class UserSerializer implements Serializer{
 
 	@Override
-	public String serialize(UserBase user) {
+	public String serialize(Object user) {
 		String serialized = "ID | Username | Rol \n";
-		serialized += user.getId() + " | " + user.getName() + " | " + user.getRole();
+		serialized += ((UserBase) user).getId() + " | " + ((UserBase) user).getName() + " | " + ((UserBase) user).getRole();
 		return serialized;
 	}
 

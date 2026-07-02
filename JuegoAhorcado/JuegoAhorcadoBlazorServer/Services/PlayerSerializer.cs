@@ -1,4 +1,4 @@
-using JuegoAhorcadoBlazorServer.Modelo;
+﻿using JuegoAhorcadoBlazorServer.Modelo;
 
 namespace JuegoAhorcadoBlazorServer.Services
 {
@@ -6,21 +6,16 @@ namespace JuegoAhorcadoBlazorServer.Services
     {
         public string Serialize(Player player)
         {
-            if (player == null)
-                throw new ArgumentNullException(nameof(player));
+            string values = "";
 
-            if (player.Role == null)
-                throw new Exception("El Player debe tener un Role asignado.");
+            values += player.Id;
+            values += "%" + player.Name;
+            values += "%" + player.Pass;
+            values += "%" + player.Role;
+            values += "%" + player.Rounds;
+            values += "%" + player.Points;
 
-            return string.Join("|",
-                player.Id,
-                player.Name,
-                player.Password,
-                player.Role.Id,
-                player.Role.Name,
-                player.Rounds,
-                player.Points
-            );
+            return values;
         }
     }
 }

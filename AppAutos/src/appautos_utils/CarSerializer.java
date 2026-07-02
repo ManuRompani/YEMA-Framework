@@ -3,13 +3,16 @@ package appautos_utils;
 import models.Car;
 import services.Serializer;
 
-public class CarSerializer implements Serializer<Car> {
+public class CarSerializer implements Serializer {
 
 	@Override
-	public String serialize(Car car) {
+	public String serialize(Object car) {
+		
 		String serialized = "licensePlate|speed\n";
-		serialized += car.getLicensePlate() + "|" + car.getSpeed();
+		serialized += ((Car) car).getLicensePlate() + "|" + ((Car) car).getSpeed();
 		return serialized;
 	}
+
+	
 
 }

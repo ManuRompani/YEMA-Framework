@@ -2,17 +2,12 @@ package services;
 
 import annotations.AuthorizedRoles;
 import dtos.Command;
-import dtos.Credentials;
 import dtos.Response;
 import exceptions.InvalidCommandException;
 import exceptions.ServiceNotImplementedException;
-import exceptions.ValidatorException;
 import framework_controllers.BaseController;
 import framework_controllers.ControllerLocator;
 import interfaces.ICommunicator;
-import interfaces.IUserManager;
-import model.RoleBase;
-import model.UserBase;
 import utils.CommandParser;
 import utils.Context;
 import utils.SessionData;
@@ -41,7 +36,7 @@ public class Session implements Runnable {
 		Response response = new Response();
 
 		
-		while (true) {
+		/*while (true) {
 			String username="";
 			String password="";
 			String resp="";
@@ -58,7 +53,7 @@ public class Session implements Runnable {
 					return;
 				}
 				
-				if(!resp.equalsIgnoreCase("si") && !resp.equalsIgnoreCase("no") && !resp.equalsIgnoreCase("salir")){					communicator.send("Debes responder si/no/salir");
+				if(!resp.equalsIgnoreCase("si") && !resp.equalsIgnoreCase("no") && !resp.equalsIgnoreCase("salir")){communicator.send("Debes responder si/no/salir");
 					continue;
 				}				
 				
@@ -98,7 +93,7 @@ public class Session implements Runnable {
 			}
 			
 			communicator.send(response.getMessage());
-		}
+		}*/
 
 		Context context = new Context(this.sessionData, this.serviceLocator);
 		
@@ -120,14 +115,14 @@ public class Session implements Runnable {
 
 				if (sMessage.toLowerCase().trim().equals("salir")) {
 					communicator.send("Saliendo....");
-					System.out.println("Hilo terminado: " + Thread.currentThread().getName());// SOLO PARA PRUEBAS
+					System.out.println("Hilo terminado: " + Thread.currentThread().getName()); // SOLO PARA PRUEBAS
 					return;
 				}
 
 				Command command = parser.Parse(sMessage);
-				
+				System.out.println(command.getParameter("player"));
+				System.out.println(command.getResource());
 				BaseController controller = this.controllerLocator.getController(command.getResource());
-				
 				// Se valida que el usuario este autorizado a usar el controlador
 				//
 				// Lo valido en la sesion para que cada usuario se autogestione y no que 
@@ -163,7 +158,7 @@ public class Session implements Runnable {
 	        return true;
 	    }
 	    
-	    RoleBase userRole = this.sessionData.getUser().getRole();
+	    String userRole = this.sessionData.getUser().getRole();
 	    
 	    if(userRole == null) {
 	    	return false;
@@ -174,7 +169,7 @@ public class Session implements Runnable {
 	    String[] roles = annotation.roles();
 
 	    for (String role : roles) {
-	        if (role.equals(userRole.getName())) {
+	        if (role.equals(userRole)) {
 	            return true;
 	        }
 	    }

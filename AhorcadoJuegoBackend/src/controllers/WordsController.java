@@ -7,8 +7,8 @@ import dtos.Command;
 import dtos.Response;
 import exceptions.ServiceNotImplementedException;
 import framework_controllers.BaseController;
-import services.ServiceLocator;
 import utils.Context;
+import services.ServiceLocator;
 
 @AuthorizedRoles(roles = {"admin","player"})
 public class WordsController extends BaseController {

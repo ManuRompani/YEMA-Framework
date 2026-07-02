@@ -7,9 +7,9 @@ import dtos.Command;
 import dtos.Response;
 import exceptions.ServiceNotImplementedException;
 import framework_controllers.BaseController;
+import utils.Context;
 import models.Player;
 import services.ServiceLocator;
-import utils.Context;
 
 public class ScoreController extends BaseController {
 	private ScoreContainer scoreContainer;

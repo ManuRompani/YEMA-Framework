@@ -15,6 +15,7 @@ public class WordSerializer implements Serializer {
             values += word.getName();
             values += "|" + word.getCategory();
             values += "|" + word.getHint();
+            values += "|" + word.getScore();
 
             return values;
 

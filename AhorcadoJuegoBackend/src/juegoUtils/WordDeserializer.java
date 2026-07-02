@@ -13,8 +13,11 @@ public class WordDeserializer implements Deserializer {
             String name = values[0];
             String category = values[1];
             String hint = values[2];
+            String score = values[3];
+            
+            int iscore = Integer.parseInt(score);
 
-            Word word = new Word(name, category, hint);
+            Word word = new Word(name, category, hint, iscore);
 
             return (T) word;
 

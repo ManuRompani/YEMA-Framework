@@ -4,24 +4,25 @@ public class Word {
 	private String name;
 	private String category;
 	private String hint;
-	private int puntaje;
+	private int score;
 	
 	// usuario que agrego la palabra
 	private String username;
 	
-	public Word(String name, String category, String hint) {
+	public Word(String name, String category, String hint, int score) {
 		super();
 		this.name = name;
 		this.category = category;
 		this.hint = hint;
+		this.score = score;
 	}
 
-	public int getPuntaje() {
-		return puntaje;
+	public int getScore() {
+		return score;
 	}
 
-	public void setPuntaje(int puntaje) {
-		this.puntaje = puntaje;
+	public void setScore(int score) {
+		this.score = score;
 	}
 
 	public String getName() {

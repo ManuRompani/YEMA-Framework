@@ -1,0 +1,193 @@
+@page "/login"
+@rendermode InteractiveServer
+@using JuegoAhorcadoBlazorServer.Modelo
+@using JuegoAhorcadoBlazorServer.Negocio
+@using Microsoft.AspNetCore.Components.Web
+@using JuegoAhorcadoBlazorServer.Services
+@inject NavigationManager Navigation
+@inject PlayerNegocio PlayerNegocio
+@inject SessionState Session
+
+<div class="login-page">
+    <a class="back-link" href="/">&#x2190; Volver al menú</a>
+
+    <div class="login-card">
+        <div class="login-icon">&#x1F3AE;</div>
+
+        <h1 class="login-title">@(isLogin ? "Iniciá sesión" : "Registrate")</h1>
+        <p class="login-subtitle">Para jugar tenés que estar identificado</p>
+
+        <div class="auth-tabs">
+            <button type="button"
+                    class="auth-tab @(isLogin ? "active" : "")"
+                    @onclick="ShowLogin"
+                    disabled="@isLoading">
+                Iniciar sesión
+            </button>
+
+            <button type="button"
+                    class="auth-tab @(!isLogin ? "active" : "")"
+                    @onclick="ShowRegister"
+                    disabled="@isLoading">
+                Registrarse
+            </button>
+        </div>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <p style="color: var(--accent-red); font-size: 0.8rem; margin-bottom: 1rem;">
+                @errorMessage
+            </p>
+        }
+
+        @if (!string.IsNullOrEmpty(successMessage))
+        {
+            <p style="color: var(--accent-green); font-size: 0.8rem; margin-bottom: 1rem;">
+                @successMessage
+            </p>
+        }
+
+        <EditForm Model="model" OnValidSubmit="HandleSubmit">
+            <div class="form-group">
+                <label class="form-label">USUARIO</label>
+                <input class="form-input"
+                       type="text"
+                       placeholder="Tu nombre de usuario"
+                       @bind="model.Username"
+                       disabled="@isLoading" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">CONTRASEÑA</label>
+                <input class="form-input"
+                       type="password"
+                       placeholder="Tu contraseña"
+                       @bind="model.Password"
+                       disabled="@isLoading" />
+            </div>
+
+            <button type="submit" class="btn-submit" disabled="@isLoading">
+                @(isLoading ? "Procesando..." : (isLogin ? "¡A jugar!" : "Crear cuenta"))
+            </button>
+        </EditForm>
+
+        <p class="login-demo">Demo admin: <span>admin / admin</span></p>
+    </div>
+</div>
+
+@code {
+    private bool isLogin = true;
+    private bool isLoading = false;
+
+    private string errorMessage = "";
+    private string successMessage = "";
+
+    private LoginModel model = new();
+
+    private string returnUrl = "/jugar";
+
+    protected override void OnInitialized()
+    {
+        if (Session.IsLoggedIn)
+        {
+            Navigation.NavigateTo(returnUrl, forceLoad: true);
+            return;
+        }
+
+        var uri = Navigation.ToAbsoluteUri(Navigation.Uri);
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+        returnUrl = query["returnUrl"] ?? "/jugar";
+    }
+
+    private void ShowLogin()
+    {
+        isLogin = true;
+        errorMessage = "";
+        successMessage = "";
+    }
+
+    private void ShowRegister()
+    {
+        isLogin = false;
+        errorMessage = "";
+        successMessage = "";
+    }
+
+    private async Task HandleSubmit()
+    {
+        errorMessage = "";
+        successMessage = "";
+        isLoading = true;
+
+        try
+        {
+            if (string.IsNullOrWhiteSpace(model.Username) ||
+                string.IsNullOrWhiteSpace(model.Password))
+            {
+                errorMessage = "Debe ingresar usuario y contraseña.";
+                return;
+            }
+
+            if (isLogin)
+            {
+                Credentials cred = new Credentials
+                {
+                    Username = model.Username,
+                    Pass = model.Password
+                };
+
+                Player? playerLogueado = await PlayerNegocio.Login(cred);
+
+                if (playerLogueado == null)
+                {
+                    errorMessage = "Credenciales inválidas.";
+                }
+                else
+                {
+                    Session.Login(playerLogueado);
+                    successMessage = $"Bienvenido {playerLogueado.Name}";
+
+                    await Task.Delay(500);
+
+                    Navigation.NavigateTo(returnUrl);
+                }
+
+            }
+            else
+            {
+                Player newPlayer = new Player
+                {
+                    Id = 0,
+                    Name = model.Username,
+                    Pass = model.Password,
+                    Role = "player",
+                    Rounds = 0,
+                    Points = 0
+                };
+
+                Player registered = await PlayerNegocio.Register(newPlayer);
+
+                Session.Login(registered);
+                successMessage = $"¡Cuenta creada! Bienvenido {registered.Name}";
+
+                await Task.Delay(500);
+
+                Navigation.NavigateTo(returnUrl);
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.InnerException?.Message ?? ex.Message;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    public class LoginModel
+    {
+        public string Username { get; set; } = "";
+        public string Password { get; set; } = "";
+    }
+}

@@ -10,11 +10,11 @@ import utils.Constants;
 public class YemaAppBuilder {
 	private ServiceLocator serviceLocator = null;
 	private ControllerLocator controllerLocator = null;
-	private String communicatorType = Constants.SOCKET;
-	
+	private String communicatorType = Constants.SOCKET;	
 	private ServerSocket serverSocket = null;
-	private int socketPort = 80;
+	private int socketPort = 8080;
 
+	
 	// CONFIGURACION DE CONSOLA
 	public void useConsoleAsCommunicator() {
 		this.communicatorType = Constants.CONSOLE;
@@ -51,6 +51,10 @@ public class YemaAppBuilder {
 	public YemaApp build() throws IOException {
 		if(communicatorType.equals(Constants.SOCKET)) {
 			serverSocket = new ServerSocket(this.socketPort);
+		}
+		
+		for(BaseController controller : controllerLocator.getControllers()) {
+			controller.iniciarServicios(serviceLocator);
 		}
 		
 		return new YemaApp(this.serviceLocator, this.controllerLocator, this.serverSocket);

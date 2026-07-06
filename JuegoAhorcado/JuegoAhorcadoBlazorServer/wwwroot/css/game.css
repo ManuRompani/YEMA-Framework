@@ -1,0 +1,1278 @@
+:root {
+    --bg-primary: #0f0f1a;
+    --bg-secondary: #1a1a2e;
+    --bg-card: #1e1e32;
+    --bg-input: #2a2a40;
+    --border-color: #3a3a5c;
+    --text-primary: #ffffff;
+    --text-secondary: #a0a0b8;
+    --text-muted: #6a6a82;
+    --accent-pink: #ff4d6d;
+    --accent-pink-hover: #ff3355;
+    --accent-gold: #f0a030;
+    --accent-green: #40c057;
+    --accent-red: #ff4444;
+    --accent-purple: #7c3aed;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+#app {
+    min-height: 100vh;
+}
+
+/* ======================== */
+/* LAYOUT DEL JUEGO         */
+/* ======================== */
+.game-layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.game-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.5rem;
+    background-color: rgba(15, 15, 26, 0.95);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.game-top-bar .exit-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.game-top-bar .exit-btn:hover {
+    color: var(--accent-red);
+}
+
+.game-stats {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.game-stat {
+    text-align: center;
+}
+
+.game-stat-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.game-stat-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.game-stat-value.round {
+    color: var(--text-primary);
+}
+
+.game-stat-value.points {
+    color: var(--accent-gold);
+}
+
+.game-stat-value.lives {
+    color: var(--accent-pink);
+    font-size: 1rem;
+}
+
+.game-user {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.game-content {
+    flex: 1;
+    display: flex;
+    padding: 2rem;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* ======================== */
+/* PANEL LATERAL IZQUIERDO  */
+/* ======================== */
+.game-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    min-width: 220px;
+}
+
+/* Ahorcado Card */
+.hangman-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.hangman-svg {
+    width: 140px;
+    height: 150px;
+    margin: 0 auto 1rem;
+}
+
+.hangman-svg line,
+.hangman-svg circle {
+    stroke: var(--accent-pink);
+    stroke-width: 3;
+    stroke-linecap: round;
+    fill: none;
+}
+
+.hangman-svg .gallows {
+    stroke: var(--accent-pink);
+    stroke-width: 4;
+}
+
+.error-count {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+/* Info Card */
+.info-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.25rem;
+}
+
+.info-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+}
+
+.category-badge {
+    display: inline-block;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8rem;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.hint-text {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+}
+
+.points-display {
+    margin-bottom: 0.3rem;
+}
+
+.points-number {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--accent-gold);
+}
+
+.points-unit {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.bonus-badge {
+    display: inline-block;
+    background-color: var(--accent-green);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    border-radius: 20px;
+    margin-left: 0.5rem;
+}
+
+.points-note {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+}
+
+/* ======================== */
+/* AREA PRINCIPAL DEL JUEGO */
+/* ======================== */
+.game-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+}
+
+/* Palabra */
+.word-display {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+.word-row {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.letter-slot {
+    width: 40px;
+    height: 50px;
+    border-bottom: 3px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-transform: uppercase;
+}
+
+.letter-slot.revealed {
+    border-bottom-color: var(--accent-gold);
+}
+
+.letter-slot.space {
+    border-bottom: none;
+    width: 20px;
+}
+
+.word-length {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* Teclado */
+.keyboard {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.keyboard-row {
+    display: flex;
+    gap: 0.4rem;
+    justify-content: center;
+}
+
+.key-btn {
+    width: 42px;
+    height: 42px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.key-btn:hover:not(:disabled) {
+    border-color: var(--accent-purple);
+    background-color: rgba(124, 58, 237, 0.2);
+}
+
+.key-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.key-btn.correct {
+    border-color: var(--accent-green);
+    background-color: rgba(64, 192, 87, 0.2);
+    color: var(--accent-green);
+}
+
+.key-btn.wrong {
+    border-color: var(--accent-red);
+    background-color: rgba(255, 68, 68, 0.2);
+    color: var(--accent-red);
+    opacity: 0.5;
+}
+
+/* ======================== */
+/* MENU PRINCIPAL           */
+/* ======================== */
+.menu-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse at center, #1a1a2e 0%, #0f0f1a 70%);
+    padding: 2rem;
+    position: relative;
+}
+
+.menu-login-btn {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.menu-login-btn:hover {
+    border-color: var(--text-primary);
+    color: var(--text-primary);
+}
+
+.menu-icon {
+    font-size: 4rem;
+    margin-bottom: 0.5rem;
+}
+
+.menu-title {
+    font-size: 3.5rem;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-primary);
+    text-shadow: 0 0 30px rgba(255, 77, 109, 0.3);
+    margin-bottom: 0.5rem;
+}
+
+.menu-subtitle {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    margin-bottom: 2.5rem;
+}
+
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    max-width: 280px;
+}
+
+.btn-play {
+    width: 100%;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-play.primary {
+    background: linear-gradient(135deg, var(--accent-pink), #e63956);
+    color: white;
+    box-shadow: 0 4px 20px rgba(255, 77, 109, 0.3);
+}
+
+.btn-play.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(255, 77, 109, 0.4);
+}
+
+.btn-play.secondary {
+    background: linear-gradient(135deg, #8b6914, #a07818);
+    color: white;
+    border: 2px solid #c0922a;
+}
+
+.btn-play.secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(160, 120, 24, 0.3);
+}
+
+.menu-footer {
+    position: absolute;
+    bottom: 2rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    letter-spacing: 0.3em;
+}
+
+/* ======================== */
+/* LOGIN / REGISTRO         */
+/* ======================== */
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse at center, #1a1a2e 0%, #0f0f1a 70%);
+    padding: 2rem;
+}
+
+.back-link {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: color 0.2s;
+}
+
+.back-link:hover {
+    color: var(--text-primary);
+}
+
+.login-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.login-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.login-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 0.3rem;
+}
+
+.login-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+}
+
+.auth-tabs {
+    display: flex;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 0.7rem 1rem;
+    border: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    background-color: transparent;
+    color: var(--text-secondary);
+}
+
+.auth-tab.active {
+    background: linear-gradient(135deg, var(--accent-pink), #e63956);
+    color: white;
+}
+
+.auth-tab:not(.active):hover {
+    background-color: var(--bg-input);
+}
+
+.form-group {
+    text-align: left;
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--accent-purple);
+}
+
+.form-input::placeholder {
+    color: var(--text-muted);
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 0.9rem;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: all 0.2s;
+    background: linear-gradient(135deg, var(--accent-pink), #e63956);
+    color: white;
+}
+
+.btn-submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(255, 77, 109, 0.3);
+}
+
+.login-demo {
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.login-demo span {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* ======================== */
+/* TABLA DE POSICIONES      */
+/* ======================== */
+.positions-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    background: radial-gradient(ellipse at center, #1a1a2e 0%, #0f0f1a 70%);
+}
+
+.positions-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.positions-trophy {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+
+.positions-title {
+    font-size: 2.2rem;
+    font-weight: 900;
+    margin-bottom: 0.3rem;
+}
+
+.positions-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.positions-table {
+    width: 100%;
+    max-width: 600px;
+    border-collapse: separate;
+    border-spacing: 0 0.5rem;
+}
+
+.positions-table thead th {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    text-align: left;
+}
+
+.positions-table thead th:last-child {
+    text-align: right;
+}
+
+.positions-table tbody tr {
+    background-color: var(--bg-card);
+    border-radius: 8px;
+    transition: transform 0.15s;
+}
+
+.positions-table tbody tr:hover {
+    transform: scale(1.01);
+}
+
+.positions-table td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.positions-table td:first-child {
+    border-radius: 8px 0 0 8px;
+    width: 50px;
+    text-align: center;
+}
+
+.positions-table td:last-child {
+    border-radius: 0 8px 8px 0;
+    text-align: right;
+}
+
+.rank-medal {
+    font-size: 1.2rem;
+}
+
+.rank-number {
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.player-name {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.rounds-played {
+    color: var(--text-secondary);
+}
+
+.player-points {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--accent-gold);
+}
+
+.btn-play-now {
+    margin-top: 2rem;
+    padding: 0.9rem 2.5rem;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--accent-pink), #e63956);
+    color: white;
+    transition: all 0.2s;
+}
+
+.btn-play-now:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(255, 77, 109, 0.3);
+}
+
+/* ======================== */
+/* MODALES                  */
+/* ======================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+}
+
+.modal-content {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.modal-icon {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 0.3rem;
+}
+
+.modal-title.defeat {
+    color: var(--accent-pink);
+}
+
+.modal-title.warning {
+    color: var(--text-primary);
+}
+
+.modal-word {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.modal-message {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+}
+
+.modal-message .highlight {
+    color: var(--accent-gold);
+    font-weight: 600;
+}
+
+.modal-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.btn-modal {
+    padding: 0.8rem 1.5rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.btn-modal.primary {
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.btn-modal.primary:hover {
+    background-color: var(--border-color);
+}
+
+.btn-modal.danger {
+    background-color: rgba(255, 68, 68, 0.2);
+    border: 1px solid var(--accent-red);
+    color: var(--accent-red);
+}
+
+.btn-modal.danger:hover {
+    background-color: rgba(255, 68, 68, 0.3);
+}
+
+.btn-modal.accent {
+    background: linear-gradient(135deg, #8b6914, #a07818);
+    border: 2px solid #c0922a;
+    color: white;
+}
+
+.btn-modal.accent:hover {
+    transform: translateY(-1px);
+}
+
+/* ======================== */
+/* PANEL ADMIN              */
+/* ======================== */
+.admin-layout {
+    min-height: 100vh;
+    background-color: var(--bg-primary);
+}
+
+.admin-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.admin-topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.admin-back-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: color 0.2s;
+}
+
+.admin-back-link:hover {
+    color: var(--text-primary);
+}
+
+.admin-divider {
+    color: var(--border-color);
+}
+
+.admin-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+}
+
+.admin-session {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.admin-session span {
+    color: var(--accent-gold);
+    font-weight: 600;
+}
+
+.admin-tabs {
+    display: flex;
+    gap: 0;
+    padding: 0 1.5rem;
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.admin-tab {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.75rem 1rem;
+    border: none;
+    background: none;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.admin-tab.active {
+    color: var(--accent-pink);
+    border-bottom-color: var(--accent-pink);
+}
+
+.admin-tab:hover:not(.active) {
+    color: var(--text-secondary);
+}
+
+.admin-content {
+    padding: 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.admin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.admin-section-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+.admin-section-title span {
+    color: var(--text-muted);
+    font-weight: 400;
+    font-size: 1rem;
+}
+
+.btn-add {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--accent-pink), #e63956);
+    color: white;
+    transition: all 0.2s;
+}
+
+.btn-add:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(255, 77, 109, 0.3);
+}
+
+/* Tabla Admin */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--bg-card);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.admin-table thead {
+    background-color: var(--bg-input);
+}
+
+.admin-table thead th {
+    padding: 0.8rem 1rem;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.admin-table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.15s;
+}
+
+.admin-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.admin-table tbody tr:hover {
+    background-color: rgba(124, 58, 237, 0.05);
+}
+
+.admin-table td {
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+}
+
+.admin-table td.word {
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.admin-table td.category {
+    color: var(--text-secondary);
+}
+
+.admin-table td.hint {
+    color: var(--text-secondary);
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.admin-table td.actions {
+    white-space: nowrap;
+}
+
+.btn-edit,
+.btn-delete {
+    padding: 0.35rem 0.75rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-left: 0.3rem;
+}
+
+.btn-edit {
+    background-color: rgba(124, 58, 237, 0.2);
+    color: var(--accent-purple);
+    border: 1px solid rgba(124, 58, 237, 0.3);
+}
+
+.btn-edit:hover {
+    background-color: rgba(124, 58, 237, 0.3);
+}
+
+.btn-delete {
+    background-color: rgba(255, 68, 68, 0.2);
+    color: var(--accent-red);
+    border: 1px solid rgba(255, 68, 68, 0.3);
+}
+
+.btn-delete:hover {
+    background-color: rgba(255, 68, 68, 0.3);
+}
+
+/* Formulario Agregar/Editar */
+.admin-form-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.admin-form-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.admin-form-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.admin-form-group {
+    flex: 1;
+}
+
+.admin-form-group label {
+    display: block;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+
+.admin-form-group input {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+}
+
+.admin-form-group input:focus {
+    outline: none;
+    border-color: var(--accent-purple);
+}
+
+.admin-form-group input::placeholder {
+    color: var(--text-muted);
+}
+
+.admin-form-buttons {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.btn-save {
+    padding: 0.6rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--accent-pink), #e63956);
+    color: white;
+    transition: all 0.2s;
+}
+
+.btn-save:hover {
+    transform: translateY(-1px);
+}
+
+.btn-cancel {
+    padding: 0.6rem 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    background-color: transparent;
+    color: var(--text-secondary);
+    transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+}
+
+/* Reglas de Puntos */
+.rules-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.rule-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: border-color 0.2s;
+}
+
+.rule-card:hover {
+    border-color: var(--accent-purple);
+}
+
+.rule-info {
+    flex: 1;
+}
+
+.rule-title {
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.rule-details {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.rule-details .pts {
+    color: var(--accent-gold);
+    font-weight: 600;
+}
+
+.rule-details .bonus {
+    color: var(--accent-green);
+    font-weight: 600;
+}
+
+.btn-rule-edit {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: transparent;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-rule-edit:hover {
+    border-color: var(--text-primary);
+    color: var(--text-primary);
+}
+
+.info-banner {
+    background-color: rgba(240, 160, 48, 0.1);
+    border: 1px solid rgba(240, 160, 48, 0.3);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-top: 1.5rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.info-banner .label {
+    color: var(--accent-gold);
+    font-weight: 600;
+}
+
+/* ======================== */
+/* RESPONSIVE               */
+/* ======================== */
+@media (max-width: 768px) {
+    .game-content {
+        flex-direction: column;
+        padding: 1rem;
+    }
+
+    .game-sidebar {
+        flex-direction: row;
+        min-width: auto;
+        overflow-x: auto;
+    }
+
+    .hangman-card,
+    .info-card {
+        min-width: 200px;
+    }
+
+    .menu-title {
+        font-size: 2.5rem;
+    }
+
+    .key-btn {
+        width: 34px;
+        height: 34px;
+        font-size: 0.8rem;
+    }
+
+    .letter-slot {
+        width: 30px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+
+    .admin-form-row {
+        flex-direction: column;
+    }
+
+    .positions-table {
+        font-size: 0.85rem;
+    }
+}

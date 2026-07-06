@@ -1,5 +1,4 @@
-module YEMA {
-	exports main;
+module YEMA {	
 	exports utils;
 	exports validators;
 	exports exceptions;
@@ -7,4 +6,6 @@ module YEMA {
 	exports framework_controllers;
 	exports dtos;
 	exports services;
+	exports model;
+	exports annotations;
 }

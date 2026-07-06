@@ -1,6 +1,8 @@
 package framework_controllers;
 
 import exceptions.ServiceNotImplementedException;
+
+import java.util.Collection;
 import java.util.HashMap;
 
 public class ControllerLocator {
@@ -18,9 +20,15 @@ public class ControllerLocator {
 	public BaseController getController(String resource) throws ServiceNotImplementedException {
 		BaseController controller = this.controllers.get(resource.toLowerCase());
 		if (controller == null) {
-			throw new ServiceNotImplementedException();
+			throw new ServiceNotImplementedException(resource);
+			
 		}
+		System.out.println("retorno");
 		return controller;
 	}
 	
+	//nuevo: devuelve una coleccion de controladores
+	public Collection<BaseController> getControllers(){
+		return controllers.values();
+	}
 }

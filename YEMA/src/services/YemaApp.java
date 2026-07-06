@@ -27,12 +27,8 @@ public class YemaApp implements Runnable  {
 		this.controllerLocator = controllerLocator;
 		this.serverSocket = serverSocket;
 	}
+
 	
-	
-	
-	//
-	//
-	//
 	@Override
 	public void run() {
 		//Scoket
@@ -52,10 +48,11 @@ public class YemaApp implements Runnable  {
 							this.commandParser,
 							new CommunicatorSocket(soc));
 					
-					session.run();
+					 Thread hilo = new Thread(session);
+				        hilo.start();
 				}
 				catch(Exception e) {
-					//No termino de decidir que pasa aca
+					System.out.println(e.getMessage());
 				}
 			}
 		}
@@ -63,7 +60,16 @@ public class YemaApp implements Runnable  {
 		else{
 			System.out.println("CONSOLE");
 			System.out.println("Escuchando...");
-			//Crea logica para consola
+			
+			CommunicatorConsole console = new CommunicatorConsole(System.out, System.in);
+			
+			Session session = new Session(
+					this.controllerLocator,
+					this.serviceLocator,
+					this.commandParser,
+					console);
+			
+			session.run();
 		}
 	}
 }

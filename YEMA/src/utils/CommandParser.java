@@ -17,7 +17,7 @@ public class CommandParser{
 			return new Command(segments[0], segments[1], getParameters());
 		}
 		catch(Exception e){
-			throw new InvalidCommandException();
+			throw new InvalidCommandException("Comando " + parseString + " invalido");
 		}
 	}
 	

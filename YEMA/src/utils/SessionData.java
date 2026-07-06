@@ -2,12 +2,14 @@ package utils;
 
 import java.util.HashMap;
 
+import model.UserBase;
+
 public class SessionData {
 	private HashMap<String, Object> attributes;	 
 	
-	public SessionData(String username) {
+	public SessionData(UserBase user) {
 		this.attributes = new HashMap<>();
-		this.attributes.put("userName", username);
+		this.attributes.put("userName", user.getName());
 	}
 
 	//Es un atajo, pero se puede usar tranquilamente el getAttribute
@@ -22,5 +24,5 @@ public class SessionData {
 	public Object getAttribute(String key) {
 		return this.attributes.get(key);
 	}
-	
+
 }

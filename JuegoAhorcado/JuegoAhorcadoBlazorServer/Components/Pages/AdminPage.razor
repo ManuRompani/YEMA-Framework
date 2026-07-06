@@ -1,0 +1,45 @@
+@page "/admin"
+@rendermode InteractiveServer
+
+@using JuegoAhorcadoBlazorServer.Services
+@inject NavigationManager Navigation
+@inject SessionState Session
+
+<div class="admin-layout">
+    <div class="admin-topbar">
+        <div class="admin-topbar-left">
+            <a class="admin-back-link" href="/">&#x2190; Menú</a>
+            <span class="admin-divider">|</span>
+            <span class="admin-title">Panel Admin</span>
+        </div>
+
+        <div class="admin-session">Sesión: <span>@(Session.CurrentUser?.Name ?? "admin")</span></div>
+    </div>
+
+    <div class="admin-tabs">
+        <button class="admin-tab @(activeTab == "words" ? "active" : "")"
+                @onclick='() => activeTab = "words"'>
+            &#x1F4C4; Palabras
+        </button>
+
+        <button class="admin-tab @(activeTab == "categories" ? "active" : "")"
+                @onclick='() => activeTab = "categories"'>
+            &#x1F3F7; Categorías
+        </button>
+    </div>
+
+    <div class="admin-content">
+        @if (activeTab == "words")
+        {
+            <WordsTab />
+        }
+        else
+        {
+            <CategoriesTab />
+        }
+    </div>
+</div>
+
+@code {
+    private string activeTab = "words";
+}

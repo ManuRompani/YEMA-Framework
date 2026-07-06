@@ -15,7 +15,7 @@ public class ServiceLocator {
 		T service = (T) dict.get(clazz);
 		
 		if(service == null) {
-			throw new ServiceNotImplementedException();
+			throw new ServiceNotImplementedException(clazz.getName());
 		}
 		
 		return service;
@@ -24,5 +24,9 @@ public class ServiceLocator {
 	public void registerService(Object newObject) {
 		Class<?> clazz = newObject.getClass();
 		this.dict.put(clazz, newObject);
+		
+		for(Class<?> inface : clazz.getInterfaces()) {
+			this.dict.put(inface, newObject);
+		}
 	}
 }

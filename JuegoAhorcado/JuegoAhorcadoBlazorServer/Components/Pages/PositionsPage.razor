@@ -1,0 +1,82 @@
+@page "/posiciones"
+@rendermode InteractiveServer
+@using JuegoAhorcadoBlazorServer.Services
+@inject NavigationManager Navigation
+@inject ScoreNegocio ScoreNegocio
+@inject SessionState Session
+
+<div class="positions-page">
+    <a class="back-link" href="/">&#x2190; Volver al menú</a>
+
+    <div class="positions-header">
+        <div class="positions-trophy">&#x1F3C6;</div>
+        <h1 class="positions-title">Tabla de Posiciones</h1>
+        <p class="positions-subtitle">Los cracks del ahorcado argentino</p>
+    </div>
+
+    @if(Players.Any()){
+    <table class="positions-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>JUGADOR</th>
+                <th>RONDAS</th>
+                <th>PUNTOS</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var player in Players.Select((p, i) => new { p, index = i }))
+            {
+                <tr>
+                    <td>
+                        @if (player.index == 0)
+                        {
+                            <span class="rank-medal">&#x1F947;</span>
+                        }
+                        else if (player.index == 1)
+                        {
+                            <span class="rank-medal">&#x1F948;</span>
+                        }
+                        else if (player.index == 2)
+                        {
+                            <span class="rank-medal">&#x1F949;</span>
+                        }
+                        else
+                        {
+                            <span class="rank-number">@(player.index + 1)</span>
+                        }
+                    </td>
+                    <td><span class="player-name">@player.p.Name</span></td>
+                    <td><span class="rounds-played">@player.p.Rounds</span></td>
+                    <td><span class="player-points">@player.p.Points</span></td>
+                </tr>
+            }
+        </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No hay posiciones registradas aun.</p>
+    }
+
+    <button class="btn-play-now" @onclick="GoToPlay">&#x26A1; Jugar ahora</button>
+</div>
+
+@code {
+    private List<Player> Players = new() { };
+
+    private void GoToPlay()
+    {
+        if (Session.IsLoggedIn)
+            Navigation.NavigateTo("/jugar");
+        else
+            Navigation.NavigateTo("/login?returnUrl=/jugar");
+    }
+
+protected override async Task OnInitializedAsync()
+{
+    Players = await ScoreNegocio.GetPositions();
+}
+
+
+}

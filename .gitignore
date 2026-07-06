@@ -1,3 +1,16 @@
+# .NET 9 / Visual Studio (Agregado para evitar conflictos)
+[Bb]in/
+[Oo]bj/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.tools/
+.plots/
+AppPackages/
+BundleArtifacts/
+
 # Compiled class file
 *.class
 
@@ -23,3 +36,8 @@
 hs_err_pid*
 replay_pid*
 /.metadata/
+
+
+.vs/
+bin/
+obj/

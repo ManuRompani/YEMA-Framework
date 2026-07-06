@@ -1,0 +1,398 @@
+
+@inject NavigationManager Navigation
+@using JuegoAhorcadoBlazorServer.Modelo
+@using JuegoAhorcadoBlazorServer.Services
+
+@inject WordNegocio WordNegocio
+
+<div class="admin-header">
+    <h2 class="admin-section-title">Palabras <span>(@Words.Count)</span></h2>
+    <button class="btn-add" @onclick="ShowAddForm">+ Agregar</button>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(message))
+{
+    <div class="@messageClass">
+        @message
+    </div>
+}
+
+@if (isLoading)
+{
+    <div class="admin-loading">
+        Cargando palabras...
+    </div>
+}
+else
+{
+    @if (showForm)
+    {
+        <div class="admin-form-card">
+            <div class="admin-form-title">
+                @(isEditing ? "EDITAR PALABRA" : "NUEVA PALABRA")
+            </div>
+
+            <div class="admin-form-row">
+                <div class="admin-form-group">
+                    <label>PALABRA *</label>
+                    <input type="text"
+                           placeholder="EJEMPLO"
+                           @bind="formWord" />
+                </div>
+
+                <div class="admin-form-group">
+                    <label>PISTA *</label>
+                    <input type="text"
+                           placeholder="Descripción..."
+                           @bind="formHint" />
+                </div>
+
+                <div class="admin-form-group">
+                    <label>CATEGORÍA *</label>
+
+                    <select @bind="formCategory">
+                        <option value="">Seleccione una categoría</option>
+
+                        @foreach (string category in Categories ?? new())
+                        {
+                            <option value="@category">@category</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="admin-form-group">
+                    <label>PUNTAJE *</label>
+                    <input type="number"
+                           min="1"
+                           placeholder="10"
+                           @bind="formScore" />
+                </div>
+            </div>
+
+            <div class="admin-form-buttons">
+                @if (isEditing)
+                {
+                    <button class="btn-save" @onclick="UpdateWord">Guardar</button>
+                }
+                else
+                {
+                    <button class="btn-save" @onclick="AddWord">Agregar</button>
+                }
+
+                <button class="btn-cancel" @onclick="CancelForm">Cancelar</button>
+            </div>
+        </div>
+    }
+
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>PALABRA</th>
+                <th>LETS.</th>
+                <th>CATEGORÍA</th>
+                <th>PISTA</th>
+                <th>PUNTAJE</th>
+                <th>ACCIONES</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @if (Words.Count == 0)
+            {
+                <tr>
+                    <td colspan="6" class="empty-table">
+                        No hay palabras cargadas.
+                    </td>
+                </tr>
+            }
+            else
+            {
+                @foreach (WordEntry word in Words)
+                {
+                    <tr>
+                        <td class="word">@word.Name</td>
+                        <td>@word.Name.Length</td>
+                        <td class="category">@word.Category</td>
+                        <td class="hint">@word.Hint</td>
+                        <td>@word.Score</td>
+                        <td class="actions">
+                            <button class="btn-edit" @onclick="() => EditWord(word)">Editar</button>
+                            <button class="btn-delete" @onclick="() => DeleteWord(word)">Borrar</button>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private string oldWordName = "";
+    private bool shouldRedirectToLogin = false;
+    private bool isLoading = true;
+    private bool showForm = false;
+    private bool isEditing = false;
+
+    private string formWord = "";
+    private string formHint = "";
+    private string formCategory = "";
+    private int formScore = 1;
+
+    private string message = "";
+    private string messageClass = "";
+
+    private List<WordEntry> Words = new();
+    private List<string> Categories = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            isLoading = true;
+            ClearMessage();
+
+            Categories = await WordNegocio.GetCategoriesAsync() ?? new();
+            Words = await WordNegocio.GetWordsAsync() ?? new();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            shouldRedirectToLogin = true;
+            return;
+        }
+        catch (Exception ex)
+        {
+            Categories = new();
+            Words = new();
+            ShowError("Error al cargar datos: " + ex.Message);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (shouldRedirectToLogin && firstRender)
+        {
+            shouldRedirectToLogin = false;
+            // Asegura que la llamada se ejecute en el hilo de la UI/renderer
+            await InvokeAsync(() => Navigation.NavigateTo("/login?returnUrl=/admin", forceLoad: true));
+        }
+    }
+
+    private void ShowAddForm()
+    {
+        ClearForm();
+        ClearMessage();
+
+        isEditing = false;
+        showForm = true;
+    }
+
+    private void CancelForm()
+    {
+        ClearForm();
+
+        isEditing = false;
+        showForm = false;
+    }
+
+    private async Task AddWord()
+    {
+        if (!ValidateForm())
+            return;
+
+        WordEntry word = BuildWordFromForm();
+
+        try
+        {
+            BackendResponse response = await WordNegocio.AddWordAsync(word);
+
+            if (!response.Success)
+            {
+                ShowBackendError(response);
+                return;
+            }
+
+            await LoadData();
+
+            ClearForm();
+            showForm = false;
+
+            ShowSuccess("Palabra agregada correctamente.");
+        }
+        catch (Exception ex)
+        {
+            ShowError("Error al agregar palabra: " + ex.Message);
+        }
+    }
+
+    private void EditWord(WordEntry word)
+    {
+        ClearMessage();
+
+        oldWordName = word.Name;
+
+        formWord = word.Name;
+        formHint = word.Hint;
+        formCategory = word.Category;
+        formScore = word.Score;
+
+        isEditing = true;
+        showForm = true;
+    }
+
+    private async Task UpdateWord()
+    {
+        if (!ValidateForm())
+            return;
+
+        WordEntry newWord = BuildWordFromForm();
+
+        try
+        {
+            BackendResponse response = await WordNegocio.UpdateWordAsync(oldWordName, newWord);
+
+            if (!response.Success)
+            {
+                ShowBackendError(response);
+                return;
+            }
+
+            await LoadData();
+
+            ClearForm();
+
+            isEditing = false;
+            showForm = false;
+
+            ShowSuccess("Palabra actualizada correctamente.");
+        }
+        catch (Exception ex)
+        {
+            ShowError("Error al actualizar palabra: " + ex.Message);
+        }
+    }
+
+    private async Task DeleteWord(WordEntry word)
+    {
+        try
+        {
+            BackendResponse response = await WordNegocio.DeleteWordAsync(word.Name);
+
+            if (!response.Success)
+            {
+                ShowBackendError(response);
+                return;
+            }
+
+            Words.Remove(word);
+
+            ShowSuccess("Palabra eliminada correctamente.");
+        }
+        catch (Exception ex)
+        {
+            ShowError("Error al eliminar palabra: " + ex.Message);
+        }
+    }
+
+    private WordEntry BuildWordFromForm()
+    {
+        return new WordEntry
+        {
+            Name = NormalizeWord(formWord),
+            Category = formCategory.Trim(),
+            Hint = formHint.Trim(),
+            Score = formScore
+        };
+    }
+
+    private bool ValidateForm()
+    {
+        ClearMessage();
+
+        if (string.IsNullOrWhiteSpace(formWord))
+        {
+            ShowError("Debe ingresar una palabra.");
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(formHint))
+        {
+            ShowError("Debe ingresar una pista.");
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(formCategory))
+        {
+            ShowError("Debe seleccionar una categoría.");
+            return false;
+        }
+
+        if (formScore <= 0)
+        {
+            ShowError("El puntaje debe ser mayor a cero.");
+            return false;
+        }
+
+        return true;
+    }
+
+    private string NormalizeWord(string value)
+    {
+        return value
+            .Trim()
+            .ToUpperInvariant()
+            .Replace(" ", "");
+    }
+
+    private void ClearForm()
+    {
+        oldWordName = "";
+        formWord = "";
+        formHint = "";
+        formCategory = "";
+        formScore = 1;
+    }
+
+    private void ClearMessage()
+    {
+        message = "";
+        messageClass = "";
+    }
+
+    private void ShowSuccess(string text)
+    {
+        message = text;
+        messageClass = "admin-message success";
+    }
+
+    private void ShowError(string text)
+    {
+        message = text;
+        messageClass = "admin-message error";
+    }
+
+    private void ShowBackendError(BackendResponse response)
+    {
+        if (response.IsUnauthorized)
+        {
+            Navigation.NavigateTo("/login?returnUrl=/admin", forceLoad: true);
+            return;
+        }
+
+        if (response.IsRepeated)
+        {
+            ShowError("La palabra ya existe.");
+            return;
+        }
+
+        ShowError(response.Message);
+    }
+}
